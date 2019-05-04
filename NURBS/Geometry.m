@@ -362,6 +362,13 @@ end
                 
             elseif strcmp(obj.type,'surf') == 1
                 [obj.nu,obj.U,obj.nv,obj.V,obj.Pw] = DegreeElevateSurface(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.Pw,dir,t);
+				
+				if dir == 1
+				obj.pu = obj.pu + t;
+				elseif dir == 2
+				obj.pv = obj.pv + t;
+				end
+				
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
             elseif strcmp(obj.type,'volume') == 1
