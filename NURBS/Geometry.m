@@ -461,13 +461,51 @@ end
                    Nip = OneBasisFun(obj.pw,obj.nw+obj.pw+1,obj.W,i,knot);
                end
         end
+		
+        function P = get_point_cell(obj)
+           
+            if strcmp('volume',obj.type) == 1
+               P = cell(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
+               
+               nu = size(obj.Pw,1); nv = size(obj.Pw,2); nw = size(obj.Pw,3);
+               
+               for i=1:nu
+                   for j=1:nv
+                       for k=1:nw
+                           P{i,j,k}(1) = obj.PX(i,j,k);
+                           P{i,j,k}(2) = obj.PY(i,j,k);
+                           P{i,j,k}(3) = obj.PZ(i,j,k);
+                           P{i,j,k}(4) = obj.weight(i,j,k);
+                       end
+                   end
+               end
+           
+            elseif strcmp('curve',obj.type) == 1
+                P = cell(length(obj.Pw));
+                nu = length(obj.Pw);
+               
+                for i=1:nu
+                    P{i}(1) = obj.PX(i);
+                    P{i}(2) = obj.PY(i);
+                    P{i}(3) = obj.PZ(i);
+                    P{i}(4) = obj.weight(i);
+                end
+           
+            elseif strcmp('surf',obj.type) == 1
+                P = cell(size(obj.Pw,1),size(obj.Pw,2));
+                nu = size(obj.Pw,1); nv = size(obj.Pw,2);
+               
+                for i=1:nu
+                    for j=1:nv
+                        P{i,j}(1) = obj.PX(i,j);
+                        P{i,j}(2) = obj.PY(i,j);
+                        P{i,j}(3) = obj.PZ(i,j);
+                        P{i,j}(4) = obj.weight(i,j);
+                    end
+                end
+            end
+               
+        end		
  
-        function obj = update(obj,tipo)
-            obj.type = tipo;
-        end
-        
-        function obj = update2(obj,nu)
-            obj.nu = nu;
-        end
     end
 end
