@@ -1,6 +1,6 @@
 function [Ubar, Vbar, Qw] = RefineKnotVectSurface(n,p,U,m,q,V,Pw,X,r,dir)
 
-if dir == DIR.U_DIRECTION || dir == 1
+if dir == 1
     
     Qw = Pw;
     for i=0:r
@@ -10,7 +10,7 @@ if dir == DIR.U_DIRECTION || dir == 1
     end
 end
 
-if dir == DIR.V_DIRECTION || dir == 2
+if dir == 2
     
     Qw = Pw;
     for i=0:r

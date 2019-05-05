@@ -27,27 +27,12 @@ classdef Geometry < handle
             
             if strcmp(varargin{1},'curve') == 1
                 
-                %{
-                obj.type = varargin{1};
-                obj.nu = varargin{2};
-                obj.pu = varargin{3};
-                obj.U = varargin{4};
-                obj.PX = varargin{5};
-                obj.PY = varargin{6};
-                obj.PZ = varargin{7};
-                obj.weight = varargin{8};
-                %}
-                
-                
-                %%%novo
                 obj.type = varargin{1};
                 obj.pu = varargin{2};
                 obj.U =  varargin{3};
                 
-                
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdatePTS(obj, varargin{4});
                 obj.nu = size(varargin{4},2)-1;
-                %%novo
                 
                 temp(1:obj.nu +1) = CPOINT(0,0,0,0,1);
                 for i=1:obj.nu+1
@@ -57,36 +42,18 @@ classdef Geometry < handle
             end
             
             if strcmp(varargin{1},'surf') == 1
-                %{
-                obj.type = varargin{1};
-                obj.nu = varargin{2};
-                obj.pu = varargin{3};
-                obj.U = varargin{4};
-                obj.nv = varargin{5};
-                obj.pv = varargin{6};
-                obj.V = varargin{7};
-                obj.PX = varargin{8};
-                obj.PY = varargin{9};
-                obj.PZ = varargin{10};
-                obj.weight = varargin{11};
-                %}
-                
-                
-                %%novo
+
                 obj.type = varargin{1};
                 obj.pu = varargin{2};
                 obj.U = varargin{3};
                 obj.pv = varargin{4};
                 obj.V = varargin{5};
                 
-                
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdatePTS(obj, varargin{6});
                 obj.nu = size(varargin{6},1)-1;
                 obj.nv = size(varargin{6},2)-1;
-                %%novo
                 
                 temp(1:obj.nu+1,1:obj.nv+1) = CPOINT(0,0,0,0,1);
-                
                 for i=1:obj.nu+1
                     for j=1:obj.nv+1
                         temp(i,j) = CPOINT(obj.PX(i,j),obj.PY(i,j),obj.PZ(i,j),obj.weight(i,j),0);
@@ -96,24 +63,7 @@ classdef Geometry < handle
             end
             
             if strcmp(varargin{1},'volume') == 1
-                %{
-                obj.type = varargin{1};
-                obj.nu = varargin{2};
-                obj.pu = varargin{3};
-                obj.U = varargin{4};
-                obj.nv = varargin{5};
-                obj.pv = varargin{6};
-                obj.V = varargin{7};
-                obj.nw = varargin{8};
-                obj.pw = varargin{9};
-                obj.W = varargin{10};
-                obj.PX = varargin{11};
-                obj.PY = varargin{12};
-                obj.PZ = varargin{13};
-                obj.weight = varargin{14};
-                %}
                 
-                %%novo
                 obj.type = varargin{1};
                 obj.pu = varargin{2};
                 obj.U = varargin{3};
@@ -126,10 +76,7 @@ classdef Geometry < handle
                 obj.nu = size(varargin{8},1)-1;
                 obj.nv = size(varargin{8},2)-1;
                 obj.nw = size(varargin{8},3)-1;
-                %%novo
-                
-                
-                
+
                 temp(1:obj.nu+1,1:obj.nv+1,1:obj.nw+1) = CPOINT(0,0,0,0,1);
                 for i=1:obj.nu+1
                     for j=1:obj.nv+1
@@ -258,13 +205,7 @@ classdef Geometry < handle
   
     
 end
-        
-            
-        
-        
-    
-    
-        
+           
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              
         function obj = KnotRefine(obj,X,dir)
             
@@ -435,6 +376,7 @@ end
                 
             end
         end
+		
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         
         function point = eval_point(obj,knot,knot2,knot3)
             
@@ -450,7 +392,6 @@ end
             end
             
         end
-
 
         function Nip = eval_basis(obj,dir,i,knot)
                if dir == 1

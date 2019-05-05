@@ -1,6 +1,6 @@
 function [nq,UQ,mq,VQ,Qw] = SurfaceKnotIns(np,p,UP,mp,q,VP,Pw,dir,uv,k,s,r)
 
-if (dir == DIR.U_DIRECTION || dir == 1)
+if (dir == 1)
     ump = np+p+1;
     nq = np+r;
     VQ = VP;
@@ -51,7 +51,7 @@ if (dir == DIR.U_DIRECTION || dir == 1)
     end
 end
 
-if(dir == DIR.V_DIRECTION || dir == 2)
+if(dir == 2)
     vmp = mp+q+1;
     mq = mp+r;
     UQ = UP;
