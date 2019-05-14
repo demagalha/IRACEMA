@@ -1,4 +1,4 @@
-function [INN, IEN] = GetConnectivity(nu,pu,nv,pv,nw,pw)
+function [INN, IEN, nel, nen] = GetConnectivity(nu,pu,nv,pv,nw,pw)
 
 nu = nu+1;
 nv = nv+1;

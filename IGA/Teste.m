@@ -101,7 +101,7 @@ delete(f)
 [autovector,ome] = eigs(K,M,20,'sm');
 freq = sqrt(diag(ome))/(2*pi);
  a = toc;
- scaling = 10;
+ scaling = 4;
  B = Model.get_point_cell;
  u = cell(size(B));
  comb = u;
