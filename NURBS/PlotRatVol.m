@@ -1,4 +1,4 @@
-function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W)
+function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W,render)
 
 %{
 PX(1:4,1:3,1) = [ 0    -1    -2;
@@ -71,13 +71,14 @@ end
  %%%%%%%%%%%%%%%%%%%% |               |
  %%%%%%%%%%%%%%%%%%%% |               |
  %%%%%%%%%%%%%%%%%%%%  --------->u----
-                      
+ 
+
 FX(:,:) = PX(:,:,1);
 FY(:,:) = PY(:,:,1);
 FZ(:,:) = PZ(:,:,1);
 FW(:,:) = w(:,:,1);
 
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V);
+PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
     hold on;
  %%%%%%%%%%%%%%%%%%% face 6
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -94,7 +95,7 @@ FY(:,:) = PY(:,:,end);
 FZ(:,:) = PZ(:,:,end);
 FW(:,:) = w(:,:,end);
 
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V);
+PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
 
  %%%%%%%%%%%%%%%%%%% face 4
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -117,7 +118,7 @@ PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V);
  FW = FW';
  
  
- PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V);
+ PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
      
  %%%%%%%%%%%%%%%%%%% face 3
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -139,7 +140,7 @@ PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V);
  FW(:,:) = w(end,:,:);
  FW = FW';
  
-PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V);
+PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
      
  %%%%%%%%%%%%%%%%%%% face 2
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -157,7 +158,7 @@ PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V);
  FZ(:,:) = PZ(:,1,:);
  FW(:,:) = w(:,1,:);
  
- PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W);
+ PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render);
      
  %%%%%%%%%%%%%%%%%%% face 5
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -175,7 +176,7 @@ PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V);
  FZ(:,:) = PZ(:,end,:);
  FW(:,:) = w(:,end,:);
  
- PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W);
+ PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render);
  light;
  
 for i = 1 : size(PX,3)

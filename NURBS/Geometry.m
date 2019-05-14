@@ -330,24 +330,43 @@ end
                 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
-        function [INN, IEN] = get_connectivity(obj)
-            [INN, IEN] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
+        function [INN, IEN, nel, nen] = get_connectivity(obj)
+            [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [] = plot_geo(obj)
+        function [] = plot_geo(obj,render)
             
             if strcmp(obj.type,'curve') == 1
             PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,1,0);
             
             elseif strcmp(obj.type,'surf') == 1
-                PlotSurf(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V);
+                
+                if (nargin == 1)
+                    render = 'medium';
+                end
+                PlotSurf(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render);
                 hold on;
                 plot3(obj.PX,obj.PY,obj.PZ,'color','black','LineWidth',2);
                 plot3((obj.PX)',(obj.PY)',(obj.PZ)','color','black','LineWidth',2);
                 
-            elseif strcmp(obj.type,'volume') == 1
-                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W);
+                lower = min([min(min((obj.PX))),min(min((obj.PY))),min(min((obj.PZ)))]);
+                higher = max([max(max((obj.PX))),max(max((obj.PY))),max(max((obj.PZ)))]);
+                xlim([lower higher]);
+                ylim([lower higher]);
+                zlim([lower higher]);
                 
+            elseif strcmp(obj.type,'volume') == 1
+                
+                if (nargin == 1)
+                    render = 'medium';
+                end
+                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render);
+                
+                lower = min([min(min(min((obj.PX)))),min(min(min((obj.PY)))),min(min(min((obj.PZ))))]);
+                higher = max([max(max(max((obj.PX)))),max(max(max((obj.PY)))),max(max(max((obj.PZ))))]);
+                xlim([lower higher]);
+                ylim([lower higher]);
+                zlim([lower higher]);
             end
             
         end

@@ -1,4 +1,4 @@
-function [] = PlotSurf(PX,PY,PZ,PW,nu,pu,U,nv,pv,V)
+function [] = PlotSurf(PX,PY,PZ,PW,nu,pu,U,nv,pv,V,render)
 
 tam(1) = nu+1; tam(2) = nv+1;
 
@@ -10,8 +10,19 @@ for i=1:tam(1)
     end
 end
 
+if strcmp(render,'coarse') == 1
+    
+uu = linspace(0,U(end),50);
+vv = linspace(0,V(end),50);
+
+elseif strcmp(render,'fine') == 1
+uu = linspace(0,U(end),200);
+vv = linspace(0,V(end),200);
+
+elseif strcmp(render,'medium') == 1
 uu = linspace(0,U(end),100);
 vv = linspace(0,V(end),100);
+end
 
  for i = numel(uu):-1:1
       for j = numel(vv):-1:1
