@@ -12,16 +12,16 @@ end
 
 if strcmp(render,'coarse') == 1
     
-uu = linspace(0,U(end),50);
-vv = linspace(0,V(end),50);
+uu = linspace(U(1),U(end),50);
+vv = linspace(V(1),V(end),50);
 
 elseif strcmp(render,'fine') == 1
-uu = linspace(0,U(end),200);
-vv = linspace(0,V(end),200);
+uu = linspace(U(1),U(end),200);
+vv = linspace(V(1),V(end),200);
 
 elseif strcmp(render,'medium') == 1
-uu = linspace(0,U(end),100);
-vv = linspace(0,V(end),100);
+uu = linspace(U(1),U(end),100);
+vv = linspace(V(1),V(end),100);
 end
 
  for i = numel(uu):-1:1

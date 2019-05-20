@@ -167,7 +167,7 @@ classdef Geometry < handle
                 weight(i) = P{i}(4);
             end
         
-        elseif strcmp(obj.type,'surface') == 1
+        elseif strcmp(obj.type,'surf') == 1
             nu = size(P,1)-1;
             nv = size(P,2)-1;
             PX = zeros(nu+1,nv+1);
