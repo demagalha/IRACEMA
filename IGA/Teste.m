@@ -5,7 +5,7 @@ clc
 tic;
 f = waitbar(0,'Carregando Dados');
 pause(.5)
-load('p4_fina.mat');
+load('Model.mat');
 % Model = viga3;
 % clear teste
 [INN, IEN, nel, nen] = Model.get_connectivity;
@@ -17,6 +17,12 @@ end
 % [wx, x] = GetOptimalQuadPoints(Model.U, Model.pu);
 % [wy, y] = GetOptimalQuadPoints(Model.V, Model.pv);
 % [wz, z] = GetOptimalQuadPoints(Model.W, Model.pw);
+% wx = 2*wx;
+% wy = 2*wy;
+% wz = 2*wz;
+% x = 2*x -1;
+% y = 2*y -1;
+% z = 2*z -1;
 [x, wx] = getGP(Model.pu);
 [y, wy] = getGP(Model.pv);
 [z, wz] = getGP(Model.pw);
@@ -101,11 +107,6 @@ delete(f)
 [autovector,ome] = eigs(K,M,20,'sm');
 freq = sqrt(diag(ome))/(2*pi);
  a = toc;
- scaling = 4;
- B = Model.get_point_cell;
- u = cell(size(B));
- comb = u;
-for i =1:size(ID,2)
-    u{i} = [autovector(ID(:,i)); 0]';
-    comb{i} = B{i} + scaling*u{i};
-end
+%  scaling = 10;
+clearvars -except K M autovector freq ome Model ID
+ save('test.mat')
