@@ -364,9 +364,24 @@ end
                 
                 lower = min([min(min(min((obj.PX)))),min(min(min((obj.PY)))),min(min(min((obj.PZ))))]);
                 higher = max([max(max(max((obj.PX)))),max(max(max((obj.PY)))),max(max(max((obj.PZ))))]);
-                xlim([lower higher]);
-                ylim([lower higher]);
-                zlim([lower higher]);
+                
+                if higher == max(max(max((obj.PY))))
+                    xlim([-higher/2 higher/2]);
+                    ylim([lower higher]);
+                    zlim([-higher/2 higher/2]);
+                
+                elseif higher == max(max(max((obj.PX))))
+                    xlim([lower higher]);
+                    ylim([-higher/2 higher/2]);
+                    zlim([-higher/2 higher/2]);
+                    
+                elseif higher == max(max(max((obj.PZ))))
+                    xlim([-higher/2 higher/2]);
+                    ylim([-higher/2 higher/2]);
+                    zlim([lower higher]);
+                end
+                xlabel('x'); ylabel('y'); zlabel('z');
+                    
             end
             
         end
