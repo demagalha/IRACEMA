@@ -75,13 +75,13 @@ for k=0:r
             R(loc_num) = N(p+1-i)*M(q+1-j)*L(r+1-k) * P{ni-i,nj-j,nk-k}(4);
             sum_tot = sum_tot + R(loc_num);
            
-            dR_dxi(loc_num,1) = dN_dxi(p+1)*M(q+1-j)*L(r+1-k) * P{ni-i,nj-j,nk-k}(4);
+            dR_dxi(loc_num,1) = dN_dxi(p+1-i)*M(q+1-j)*L(r+1-k) * P{ni-i,nj-j,nk-k}(4);
             sum_xi = sum_xi + dR_dxi(loc_num,1);
            
-            dR_dxi(loc_num,2) = N(p+1)*dM_deta(q+1-j)*L(r+1-k) * P{ni-i,nj-j,nk-k}(4);
+            dR_dxi(loc_num,2) = N(p+1-i)*dM_deta(q+1-j)*L(r+1-k) * P{ni-i,nj-j,nk-k}(4);
             sum_eta = sum_eta + dR_dxi(loc_num,2);
            
-            dR_dxi(loc_num,3) = N(p+1)*M(q+1-j)*dL_dzeta(r+1-k) * P{ni-i,nj-j,nk-k}(4);
+            dR_dxi(loc_num,3) = N(p+1-i)*M(q+1-j)*dL_dzeta(r+1-k) * P{ni-i,nj-j,nk-k}(4);
             sum_zeta = sum_zeta + dR_dxi(loc_num,3);
         end
     end
