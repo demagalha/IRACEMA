@@ -331,7 +331,13 @@ end
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
         function [INN, IEN, nel, nen] = get_connectivity(obj)
-            [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
+            if strcmp(obj.type,'curve') == 1
+                [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu);
+            elseif strcmp(obj.type,'surf') == 1
+                [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv);
+            else
+                [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
+            end
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function [] = plot_geo(obj,render)
@@ -366,22 +372,25 @@ end
                 higher = max([max(max(max((obj.PX)))),max(max(max((obj.PY)))),max(max(max((obj.PZ))))]);
                 
                 if higher == max(max(max((obj.PY))))
-                    xlim([-higher higher]);
+                    xlim([-higher/2 higher/2]);
                     ylim([lower higher]);
-                    zlim([-higher higher]);
+                    zlim([-higher/2 higher/2]);
                 
                 elseif higher == max(max(max((obj.PX))))
                     xlim([lower higher]);
-                    ylim([-higher higher]);
-                    zlim([-higher higher]);
+                    ylim([-higher/2 higher/2]);
+                    zlim([-higher/2 higher/2]);
                     
                 elseif higher == max(max(max((obj.PZ))))
-                    xlim([-higher higher]);
-                    ylim([-higher higher]);
+                    xlim([-higher/2 higher/2]);
+                    ylim([-higher/2 higher/2]);
                     zlim([lower higher]);
                 end
-                xlabel('x'); ylabel('y'); zlabel('z');
-                    
+                xlabel('x [m]','FontWeight','bold','FontSize',23)
+                ylabel('y [m]','FontWeight','bold','FontSize',23)
+                zlabel('z [m]','FontWeight','bold','FontSize',23)
+                set(gca,'FontSize',23)
+                set(gca,'FontWeight','bold')
             end
             
         end
