@@ -15,8 +15,8 @@ function [INN, IEN, nel, nen] = GetConnectivity(varargin)
             nel = (nu-pu)*(nv-pv)*(nw-pw); %number of elements
             nnp = nu*nv*nw;   %%number of global basis funs
             nen = (pu+1)*(pv+1)*(pw+1); %%number of local basis funs
-            INN(1:nnp,1:3) = 0;
-            IEN(1:nen,1:nel) = 0;
+            INN = zeros(nnp,3);
+            IEN = zeros(nen,nel);
 
             A = 0;
             e = 0;
@@ -58,9 +58,9 @@ function [INN, IEN, nel, nen] = GetConnectivity(varargin)
             nel = (nu-pu)*(nv-pv); %number of elements
             nnp = nu*nv;   %%number of global basis funs
             nen = (pu+1)*(pv+1); %%number of local basis funs
-            INN(1:nnp,1:2) = 0;
-            IEN(1:nen,1:nel) = 0;
-            
+            INN=zeros(nnp,2);
+            IEN=zeros(nen,nel);
+
             A = 0;
             e = 0;
 
@@ -86,14 +86,13 @@ function [INN, IEN, nel, nen] = GetConnectivity(varargin)
                         end
                end
         case 2
-            nu = varargin{1};
+            nu = varargin{1}+1;
             pu = varargin{2};
             nel = (nu-pu); %number of elements
             nnp = nu;   %%number of global basis funs
             nen = (pu+1); %%number of local basis funs
-            INN(1:nnp,1) = 0;
-            IEN(1:nen,1:nel) = 0;
-            
+            INN =zeros(nnp,1);
+            IEN=zeros(nen,nel);
             A = 0;
             e = 0;
 
