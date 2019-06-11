@@ -1,5 +1,6 @@
 # IRACEMA
-IsogeometRic Analysis ComputEr MATLAB Application
+## IsogeometRic Analysis ComputEr MATLAB Application
+
 This is a package of Octave/MATLAB routines used for Isogeometric Analysis, with a focus in Vibration and Acoustics.
 
 The package is organized in three sections:
