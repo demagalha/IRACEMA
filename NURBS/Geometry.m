@@ -294,7 +294,7 @@ end
         end
         
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
-        function obj = DegreeElevate(obj,dir,t)
+        function obj = DegreeElevate(obj,t,dir)
             
             if strcmp(obj.type,'curve') == 1
                 [obj.nu,obj.U,obj.Pw] = DegreeElevateCurve(obj.nu,obj.pu,obj.U,obj.Pw,t);
