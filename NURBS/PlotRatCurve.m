@@ -1,7 +1,7 @@
 function  [ ] = PlotRatCurve(n,p,U,Pw,CPTS,NOZ)
 
 
-uu = linspace(0,U(end),1000);
+uu = linspace(U(1),U(end),1000);
 C(1:numel(uu)) = CPOINT(0,0,0,0,1);
 
 for i=1:numel(uu)

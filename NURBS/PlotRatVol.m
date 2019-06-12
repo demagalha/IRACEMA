@@ -1,65 +1,8 @@
 function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W,render)
 
-%{
-PX(1:4,1:3,1) = [ 0    -1    -2;
-                  0    -1    -2;
-                  1     1     1;
-                  3     3     3];
-
-PX(1:4,1:3,2) =    [ 0    -1    -2;
-                   0    -1    -2;
-                   1     1     1;
-                   3     3     3];
-
-PY(1:4,1:3,1) = [  0         0         0;
-                   1.0000    2.0000    2.0000;
-                   1.5000    4.0000    5.0000;
-                   1.5000    4.0000    5.0000];
-
-PY(1:4,1:3,2) =   [  0         0         0;
-                   1.0000    2.0000    2.0000;
-                   1.5000    4.0000    5.0000;
-                   1.5000    4.0000    5.0000];
-
-PZ(1:4,1:3,1) = [0 0 0;
-                 0 0 0;
-                 0 0 0;
-                 0 0 0];
-
-PZ(1:4,1:3,2) = [1 1 1;
-                 1 1 1;
-                 1 1 1;
-                 1 1 1];
-             
-w(1:4,1:3,1) = [1 1 1;
-                  1 1 1;
-                  1 1 1;
-                  1 1 1];
-w(1:4,1:3,2) = [1 1 1;
-                1 1 1;
-                1 1 1;
-                1 1 1];
-           
-             
-Pw(1:4,1:3,1:2) = CPOINT(0,0,0,0,1);
-
-nu = 3;
-nv = 2;
-nw = 1;
-
-U = [0,0,0,0.5,1,1,1];
-V = [0,0,0,1,1,1];
-W = [0,0,1,1];
-
-for i=1:nu+1
-    for j=1:nv+1
-        for k=1:nw+1
-            Pw(i,j,k) = CPOINT(PX(i,j,k),PY(i,j,k),PZ(i,j,k),w(i,j,k),0);
-        end
-    end
-end
-%}
-
+Unique = unique(U);
+Vnique = unique(V);
+Wnique = unique(W);
 
  %%%%%%%%%%%%%%%%%%%% plotar as faces
  %%%%%%%%%%%%%%%%%%% face 1
@@ -80,6 +23,14 @@ FW(:,:) = w(:,:,1);
 
 PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
     hold on;
+for i=1:numel(Unique)
+    PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Unique(i));
+end
+
+for j=1:numel(Vnique)
+    PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Vnique(j));
+end
+        
  %%%%%%%%%%%%%%%%%%% face 6
  %%%%%%%%%%%%%%%%%%%%  ---------------
  %%%%%%%%%%%%%%%%%%%% v         w=end |
@@ -96,6 +47,13 @@ FZ(:,:) = PZ(:,:,end);
 FW(:,:) = w(:,:,end);
 
 PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
+for i=1:numel(Unique)
+    PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Unique(i));
+end
+
+for j=1:numel(Vnique)
+   PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Vnique(j));
+end
 
  %%%%%%%%%%%%%%%%%%% face 4
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -119,6 +77,13 @@ PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
  
  
  PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
+ for i=1:numel(Wnique)
+    PlotSurfPatches_1(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Wnique(i));
+end
+
+for j=1:numel(Vnique)
+    PlotSurfPatches_2(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Vnique(j));
+end
      
  %%%%%%%%%%%%%%%%%%% face 3
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -141,6 +106,13 @@ PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
  FW = FW';
  
 PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
+for i=1:numel(Wnique)
+    PlotSurfPatches_1(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Wnique(i));
+end
+
+for j=1:numel(Vnique)
+    PlotSurfPatches_2(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Vnique(j));
+end
      
  %%%%%%%%%%%%%%%%%%% face 2
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -159,6 +131,13 @@ PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
  FW(:,:) = w(:,1,:);
  
  PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render);
+ for i=1:numel(Unique)
+    PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Unique(i));
+end
+
+for j=1:numel(Wnique)
+    PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Wnique(j));
+end
      
  %%%%%%%%%%%%%%%%%%% face 5
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -177,7 +156,15 @@ PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
  FW(:,:) = w(:,end,:);
  
  PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render);
+for i=1:numel(Unique)
+    PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Unique(i));
+end
+
+for j=1:numel(Wnique)
+    PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Wnique(j));
+end
  light;
+
  
 for i = 1 : size(PX,3)
 plot3(PX(:,:,i),PY(:,:,i),PZ(:,:,i),'-','color','black','LineWidth',2); hold on;
@@ -199,5 +186,4 @@ plot3(PX_,PY_,PZ_,'color','black','LineWidth',2);
 plot3(PX_',PY_',PZ_','color','black','LineWidth',2);
 end
  
-end
- 
+end 
