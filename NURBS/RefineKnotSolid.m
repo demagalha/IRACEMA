@@ -11,7 +11,7 @@ P(1:size(Pw,1)) = CPOINT(0,0,0,0,1);
     for j=1:size(Pw,2)
         for k=1:size(Pw,3)
             for i=1:size(Pw,1)
-                P(i) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,0);
+                P(i) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,1);
             end
             r = length(X)-1;
             [Ubar, Q] = RefineKnotVectCurve(size(P,2)-1,pu,U,P,X,r);
@@ -33,7 +33,7 @@ if dir == 2 %REFINE IN THE V DIRECTION
     for i=1:size(Pw,1)
         for k=1:size(Pw,3)
             for j=1:size(Pw,2)
-                P(j) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,0);
+                P(j) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,1);
             end
             r = length(X)-1;
             [Vbar, Q] = RefineKnotVectCurve(size(P,2)-1,pv,V,P,X,r);
@@ -54,7 +54,7 @@ if dir == 3 %%%W DIRECTION
     for i=1:size(Pw,1)
         for j=1:size(Pw,2)
             for k=1:size(Pw,3)
-                P(k) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,0);
+                P(k) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,1);
             end
             r = length(X)-1;
             [Wbar, Q] = RefineKnotVectCurve(size(P,2)-1,pw,W,P,X,r);

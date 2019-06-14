@@ -14,7 +14,7 @@ P(1:size(Pw,1)) = CPOINT(0,0,0,0,1);
     for j=1:size(Pw,2)
         for k=1:size(Pw,3)
             for i=1:size(Pw,1)
-                P(i) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,0);
+                P(i) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,1);
             end
             
             [nh,Ubar,Q] = DegreeElevateCurve(nu,pu,U,P,t);
@@ -39,7 +39,7 @@ if dir == 2
     for i=1:size(Pw,1)
         for k=1:size(Pw,3)
             for j=1:size(Pw,2)
-                P(j) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,0);
+                P(j) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,1);
             end
             
             [nh,Vbar,Q] = DegreeElevateCurve(nv,pv,V,P,t);
@@ -64,7 +64,7 @@ if dir == 3
     for i=1:size(Pw,1)
         for j=1:size(Pw,2)
             for k=1:size(Pw,3)
-                P(k) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,0);
+                P(k) = CPOINT(Pw(i,j,k).x,Pw(i,j,k).y,Pw(i,j,k).z,Pw(i,j,k).w,1);
             end
             
             [nh,Wbar,Q] = DegreeElevateCurve(nw,pw,W,P,t);
