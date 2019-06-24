@@ -465,7 +465,7 @@ end
                end
            
             elseif strcmp('curve',obj.type) == 1
-                P = cell(length(obj.Pw));
+                P = cell(length(obj.Pw),1);
                 nu = length(obj.Pw);
                
                 for i=1:nu

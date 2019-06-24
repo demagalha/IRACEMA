@@ -5,7 +5,15 @@ clc
 tic;
 f = waitbar(0,'Carregando Dados');
 pause(.5)
-load('Model.mat');
+cd ..
+cd Examples
+load('beam_coarse.mat');
+% h refine the beam in u,v and w directions
+Model.KnotRefine([[50:50:450],[550:50:950]],1);
+Model.KnotRefine([[50:50:450],[550:50:950]],2);
+Model.KnotRefine(500,3);
+cd ..
+cd IGA
 % Model = viga3;
 % clear teste
 [INN, IEN, nel, nen] = Model.get_connectivity;
@@ -40,9 +48,9 @@ rho = 7860; % Densidade
 Y = 210*10^9; % Rigidez
 vu = 0.3;
 D = get_matprop_matrix(1,Y,vu); 
-K = sparse(numel(INN),numel(INN));
+K = zeros(numel(INN),numel(INN));
 M = K;
-F = sparse(numel(INN),1);
+F = zeros(numel(INN),1);
 N_DOF = numel(INN);
 N_ELE_DOF = nen*3;
 delete(f);
@@ -89,21 +97,35 @@ for e=1:nel % Loop Through Elements
 end
 delete(f);
 f = waitbar(0,'Aplicando Condições de Contorno');
-loc_x = -0.025;
-loc_z1 = 0;
-loc_z2 = 1;
+loc_y_cc1 = 0;
+loc_z_cc1 = 0;
+loc_y_cc2 = 1;
+loc_z_cc2 = 0;
 constNod = [];
 for i = 1:numel(P)
-    if (P{i}(1)  == loc_x) && ((P{i}(3) == loc_z1) || (P{i}(3) == loc_z2))
+    cond1 = (P{i}(2) == loc_y_cc1) || (P{i}(2) == loc_y_cc2);
+    cond2 = P{i}(3) == loc_z_cc2;
+    if (cond1 && cond2)
         constNod=[constNod i];
     end
 end
 bc1 = reshape(ID(:,constNod),numel(ID(:,constNod)),1);
+rolete = length(constNod)/2;
+rolete = 2:3:rolete;
+tmp = 1;
 for i=1:numel(bc1)
-    K(bc1(i),bc1(i)) = 1e30;
-    waitbar(i/numel(bc1),f,'Aplicando Condições de Contorno')
+%     if (tmp <= numel(rolete)) && (constNod(i) == rolete(tmp)) 
+%         tmp = tmp+1;    
+%         continue
+%     else
+      K(bc1(i),bc1(i)) = 1e30;
+      waitbar(i/numel(bc1),f,'Aplicando Condições de Contorno')
+%     end
 end
 delete(f)
+K = sparse(K);
+M = sparse(M);
+F = sparse(F);
 [autovector,ome] = eigs(K,M,20,'sm');
 freq = sqrt(diag(ome))/(2*pi);
  a = toc;
