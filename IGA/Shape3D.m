@@ -1,3 +1,24 @@
+%% MIT License
+% 
+% Copyright (c) 2019 Guilherme Henrique da Silva and André Demetrio de Magalhães
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
 function [R, dR, J] = Shape3D(Model,qu,qv,qw,element,P,IEN,INN)
 %% Comments and Function I/O
 % -------------------------------------------------------------------------
@@ -42,7 +63,13 @@ dQ_du = 0;                                  % Weights of NURBS Derivatives
 dQ_dv = 0;
 dQ_dw = 0;
 weight = zeros(1,nen);                      % Array of weights in column
-pts = zeros(nen,3);                         % Array of pts in column order
+dx_du = zeros(3,3);                         % Derivatives of physical to 
+du_dx = zeros(3,3);                         % parameter coordinate/inverse
+
+du_dq = zeros(3,3);                         % Mapping from parent element
+                                            % to parameter space
+
+Jacobian = zeros(3,3);                      % Jacobian matrix
 
 %% B-Spline Basis and Derivatives to NURBS Basis and Derivatives
 NU = DersBasisFun(nu-1,u,pu,1,U); % Basis and 1st derivative in U direction 
@@ -110,21 +137,45 @@ for ww=0:pw
 end
 
 %% Jacobian
- Jacobian = pts'*dR_duvw;% Jacobian Matrix. [pts']=3xnen,[dR]=nenx3 [J]=3x3
-% Some mathematical definitions here:
-% The definition of Jacobian is a df_i/dx_j matrix. That means each column
-% Represents one physical coordinate and each row represents one
-% parametric function, in the case of B-Splines. Our Jacobian vector,
-% however, is flipped. Each row is representing a physical coordinate and
-% each column is representing a parametric function. So, to make up for it,
-% we take the transpose here.
-% PS: I realize that this could've been done by the definition, as
-% Jacobian = dR_duvw'*pts, but I would've missed the opportunity on making
-% these notes :) Shape2D and Shape1D will come with the correct formulae.
-% With some other commentaries on the determinant of rectangular matrices
-% and pseudoinverses.
-J_mod = det(Jacobian);
-J_2 = 0.125*(U(nu+1)-U(nu))*(V(nv+1)-V(nv))*(W(nw+1)-W(nw));
-J = abs(J_mod)*J_2;
-dR = dR_duvw*inv(Jacobian);
+% From parameter space to physical space
+location = 0;
+for ww=0:pw
+    for vv=0:pv
+        for uu=0:pu
+            location = location+1;
+            for xx=1:3
+                for yy=1:3
+                    dx_du(xx,yy) = dx_du(xx,yy) +P{nu-uu,nv-vv,nw-ww}*dR_du(location,yy);
+                end
+            end
+        end
+    end
+end
+% Compute inverse
+du_dx = inv(dx_du);
+
+% Compute derivatives of basis functions with respect to  physical
+% coordinates
+for location=1:nen
+    for xx=1:3
+        for yy=1:3
+            dR(location,xx) = dR(location,xx)+ dR_du(location,yy)*du_dx(yy,xx);
+        end
+    end
+end
+
+% Gradient of mapping from parent element to parameter space
+du_dq(1,1) = (U(nu+1)-U(nu))/2;
+du_dq(2,2) = (V(nv+1)-V(nv))/2;
+du_dq(3,3) = (W(nw+1)-W(nw))/2;
+
+for xx=1:3
+    for yy=1:3
+        for zz=1:3
+            Jacobian(xx,yy) = Jacobian(xx,yy) +dx_du(xx,zz)*du_dq(zz,yy);
+        end
+    end
+end
+
+J = det(Jacobian);
 end
