@@ -58,6 +58,7 @@ w = ((W(nw+1)-W(nw))*qw +W(nw+1)+W(nw))/2;  % to [0,1] parameter space
 R = zeros(nen,1);                           % Trivariate NURBS basis funs
 dR_duvw = zeros(nen,3);                     % Trivariate NURBS derivaties
                                             % (:,1)=du; (:,2)=dv; (:,3)=dw;
+dR = zeros(nen,3);                          
 Q = 0;                                      % Weight of NURBS Basis
 dQ_du = 0;                                  % Weights of NURBS Derivatives
 dQ_dv = 0;
@@ -145,7 +146,7 @@ for ww=0:pw
             location = location+1;
             for xx=1:3
                 for yy=1:3
-                    dx_du(xx,yy) = dx_du(xx,yy) +P{nu-uu,nv-vv,nw-ww}*dR_du(location,yy);
+                    dx_du(xx,yy) = dx_du(xx,yy) +P{nu-uu,nv-vv,nw-ww}(xx)*dR_duvw(location,yy);
                 end
             end
         end
@@ -159,7 +160,7 @@ du_dx = inv(dx_du);
 for location=1:nen
     for xx=1:3
         for yy=1:3
-            dR(location,xx) = dR(location,xx)+ dR_du(location,yy)*du_dx(yy,xx);
+            dR(location,xx) = dR(location,xx)+ dR_duvw(location,yy)*du_dx(yy,xx);
         end
     end
 end
