@@ -340,10 +340,15 @@ end
             end
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [] = plot_geo(obj,render)
+        function [] = plot_geo(obj,render,cpoints,isolines)
             
             if strcmp(obj.type,'curve') == 1
-            PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,1,0);
+                if nargin <= 2
+                    PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,1,0);
+                elseif nargin == 3
+                    PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,cpoints,0);
+                end
+                    
             
             elseif strcmp(obj.type,'surf') == 1
                 
@@ -365,8 +370,11 @@ end
                 
                 if (nargin == 1)
                     render = 'medium';
+                    cpoints = 0;
+                    isolines = 0;
+                    
                 end
-                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render);
+                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render,cpoints,isolines);
                 
                 lower = min([min(min(min((obj.PX)))),min(min(min((obj.PY)))),min(min(min((obj.PZ))))]);
                 higher = max([max(max(max((obj.PX)))),max(max(max((obj.PY)))),max(max(max((obj.PZ))))]);
