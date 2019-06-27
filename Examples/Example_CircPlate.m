@@ -37,7 +37,13 @@ Model.DegreeElevate(1,3); % augment 1 degree in 3rd parametric direction
 
 % Note that our disc is parametrized differently than the article's. We use
 % only one element to describe the whole geometry, while the article uses
-% an eight element mesh.
+% an eight element mesh. So we need to refine the mesh a little bit. We
+% will add 2 knots in u and v directions
+Model.KnotRefine([0.33 0.66],1);
+Model.KnotRefine([0.33 0.66],2);
+% This way, there is 9 elements in total, not 8, since our parametrization
+% is slightly different. As you will notice, the autovalues will also be
+% different.
 % Material Properties
 YOUNG_MODULUS = 30*10^9;
 RHO = 2.32*10^3; 
@@ -110,19 +116,10 @@ for e=1:nel % Loop Through Elements
 end
 
 %% Apply boundary conditions
-% Ok, so, for this example, we have to pin every outer element.
-% In the article, they don't go through full hpk refinement because of this
-% step, most likely. Since we will run into some computational trouble
-% if we want to set a conditional in the form of "(x-x0)^2+(y-y0)^2 == R^2"
-% Since the authors of the article use C, they most likely run
-% into floating point number problems to compare the squared numbers. Since
-% the purpose of this example is to retrieve the same results as them,
-% however, we know there's only four points of interest to restrain:
-% (x,y) = (0,2), (2,4), (4,2) and (2,0).
-boundary_xy(1,:) = [0 2];
-boundary_xy(2,:) = [2 4];
-boundary_xy(3,:) = [4 2];
-boundary_xy(4,:) = [2 0];
+% Since B-Splines are always inside the convex hull of their control
+% points, to apply a boundary condition where the outermost edge of a
+% circular plate is clamped, we apply the radius formulae of the circle and
+% grab all elements that are outside this radius.
 constNod = [];
 for i = 1:numel(P)
         if (((P{i}(1)-2)^2 + (P{i}(2)-2)^2)-4 >= 0)
@@ -151,7 +148,7 @@ end
 % anymore, we can turn them into sparses again to use the eigs() function.
 K = sparse(K);
 M = sparse(M);
-[autovector,ome] = eigs(K,M,3,'sm');
+[autovector,ome] = eigs(K,M,4,'sm');
 omega = sqrt(ome);
 clearvars -except K M autovector freq ome Model ID
  save('circplate.mat')
