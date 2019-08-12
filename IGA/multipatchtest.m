@@ -1,5 +1,5 @@
-%clear all
-%close all
+clear all
+close all
 clc
 
 load RectangularLeissa15.mat
@@ -16,11 +16,11 @@ Model2.DegreeElevate(3,2);
 Model2.DegreeElevate(1,3);
 %}
 
-Model.KnotRefine(0.1:0.1:0.9,1);
-Model.KnotRefine(0.1:0.1:0.9,2);
+Model.KnotRefine(0.05:0.05:0.95,1);
+Model.KnotRefine(0.05:0.05:0.95,2);
 
-Model2.KnotRefine(0.1:0.1:0.9,1);
-Model2.KnotRefine(0.1:0.1:0.9,2);
+Model2.KnotRefine(0.05:0.05:0.95,1);
+Model2.KnotRefine(0.05:0.05:0.95,2);
 
 %END OF REFINEMENT
 
@@ -62,44 +62,31 @@ MS = MasterSlave(Model,Model2,6,1);
 
 %END OF MASTER-SLAVE INDEX
 
+ID_M = reshape(ID_1(:,MS(:,1)),numel(ID_1(:,MS(:,1))),1);
+ID_S = reshape(ID_2(:,MS(:,2)),numel(ID_2(:,MS(:,2))),1);
+OVERLAP_SIZE = numel(ID_M);
 
-%local_1 = reshape(ID_1(:,MS(:,1)),numel(ID_1(:,MS(:,1))),1);
-%local_2 = reshape(ID_2(:,MS(:,2)),numel(ID_2(:,MS(:,2))),1);
-%%where
-
-for i=1:numel(MS,1)
-    ID_M = ID_1(:,MS(i,1));
-    ID_S = ID_2(:,MS(i,2));
-    
-    for ii=1:numel(ID_M)
-        for jj=1:numel(ID_S)
-            K_1(ID_M(ii),ID_M(jj)) = K_1(ID_M(ii),ID_M(jj)) + K_2(ID_S(ii),ID_S(jj));
-            M_1(ID_M(ii),ID_M(jj)) = M_1(ID_M(ii),ID_M(jj)) + M_2(ID_S(ii),ID_S(jj));
-        end
-    end
+[sz1, ~] = size(K_1);
+[sz2, ~] = size(K_2);
+sz3 = sz1 - OVERLAP_SIZE;
+sz4 = sz2 - OVERLAP_SIZE;
+K = zeros(sz1+sz2-OVERLAP_SIZE);
+M = K;
+K(1:sz1,1:sz1) = K_1;
+M(1:sz1,1:sz1) = M_1;
+K(sz3+1:end,sz3+1:end) = K(sz3+1:end,sz3+1:end) +K_2;
+M(sz3+1:end,sz3+1:end) = M(sz3+1:end,sz3+1:end) +M_2;
+for i=numel(ID_M)
+    mrow = ID_M(i);
+    srow = ID_S(i);
+    [~,mcol,m] = find(K_1(mrow,:)); % Rows and Columns of M DOF
+    [~,scol,s] = find(K_2(srow,:)); % Rows and Columns of S DOF
+    K(mrow,mcol) = K(mrow,mcol) -K_2(srow,scol);    
+    M(mrow,mcol) = M(mrow,mcol) -M_2(srow,scol);
 end
 
+K = sparse(K);
+M = sparse(M);
+[V,W] = eigs(K,M,16,'sm');
+omega = sqrt(diag(W));
 
-temp = sort(MS(:,2),'descend');
-
-for i=1:numel(temp)
-    K_2(:,temp(i)) = [];
-    K_2(temp(i),:) = [];
-    
-    M_2(:,temp(i)) = [];
-    M_2(temp(i),:) = [];
-end
-
-K = sparse(size(K_1)+size(K_2));
-M = sparse(size(K_1)+size(K_2));
-
-[sz1 sz2] = size(K_1);
-[sz3 sz4] = size(K_2);
-K(1:sz1,1:sz2) = K_1;
-K(sz1+1:sz1+sz3,sz2+1:sz2+sz4) = K_2;
-
-M(1:sz1,1:sz2) = M_1;
-M(sz1+1:sz1+sz3,sz2+1:sz2+sz4) = M_2;
-
-    [autovector,ome] = eigs(K,M,10,'sm');
-    omega = diag(sqrt(ome));
