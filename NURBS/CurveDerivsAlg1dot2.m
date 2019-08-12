@@ -22,22 +22,3 @@ end
     end
 end
 
-%wx = [0,0,1,1,2,3,4,5];
-%wy = [0,0,1,1,2,3,4,5];
-%wz = [0,0,1,1,2,3,4,5];
-
-%p = 2;
-%U = [0,0,0,1,2,3,4,4,5,5,5];
-%m = numel(U) -1;
-%n = m-p-1;
-%u = 5/2;
-%d = 1;
-%CUR = CreateStruct(wx,wy,wz,0,n,p,U)
-
-% CurveDerivsAlg1dot2(CUR.curve.polygon.n,CUR.curve.p,CUR.curve.U,CUR.curve.polygon.P.x,u,d)
-% CurveDerivsAlg1dot2(CUR.curve.polygon.n,CUR.curve.p,CUR.curve.U,CUR.curve.polygon.P.y,u,d)
-% CurveDerivsAlg1dot2(CUR.curve.polygon.n,CUR.curve.p,CUR.curve.U,CUR.curve.polygon.P.z,u,d)
-
-%retorna uma array CK onde CK(k+1) é a k-ésima derivada
-        
-
