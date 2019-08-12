@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-load('test.mat')
+load('circplate.mat')
 [INN, IEN, ~, ~] = Model.get_connectivity;
  B = Model.get_point_cell;
  x = reshape(B,numel(B),1);

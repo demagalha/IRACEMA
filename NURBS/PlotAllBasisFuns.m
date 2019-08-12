@@ -3,7 +3,7 @@ function [ ] = PlotAllBasisFuns(n,p,U)
 %%%%plot all basis functions in a single direction
 %%input n (n+1 ctrl points), p (degree),U (knot vector)
 
-uu = linspace(0,U(end)-0.001,1000);
+uu = linspace(0,U(end),1000);
 m = n+p+1;
 Nip = zeros(n+1,numel(uu));
 for i=1:numel(uu)

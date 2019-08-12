@@ -81,8 +81,8 @@ function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
         for i=1:N_QUAD_U % Loop through U quadrature points
             for j=1:N_QUAD_V % Loop through V quadrature points
                 for k=1:N_QUAD_W % Loop through W quadrature points
-                    [R, dR, J] = Shape(u(i),v(j),w(k),e,pu,pv,pw,P,U,V,W,INN,IEN);
-                    Jmod = J*wu(i)*wv(j)*ww(k);
+                    [R, dR, J] = Shape3D(Model,u(i),v(j),w(k),e,P,IEN,INN);
+                    Jmod = abs(J*wu(i)*wv(j)*ww(k));
                     K_e = K_e + BuildKLocal(dR,Jmod,D);
                     M_e = M_e + BuildMLocal(R,Jmod,RHO);
                 end

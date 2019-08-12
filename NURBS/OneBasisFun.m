@@ -1,12 +1,12 @@
 function Nip = OneBasisFun(p,m,U,i,u)
 
-i = i+1;
+
 
 if ((i == 0 && u == U(1)) || (i == m-p-1 && u == U(m+1)))
     Nip = 1;
     return
 end
-
+i = i +1;
 if (u < U(i) || u >= U(i+p+1))
     Nip = 0;
     return
