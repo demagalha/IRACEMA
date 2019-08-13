@@ -81,6 +81,9 @@ for i=numel(ID_M)
     srow = ID_S(i);
     [~,mcol,m] = find(K_1(mrow,:)); % Rows and Columns of M DOF
     [~,scol,s] = find(K_2(srow,:)); % Rows and Columns of S DOF
+    if mrow == mcol
+        continue
+    end
     K(mrow,mcol) = K(mrow,mcol) -K_2(srow,scol);    
     M(mrow,mcol) = M(mrow,mcol) -M_2(srow,scol);
 end
