@@ -2,12 +2,12 @@ function N = SurfNurbsNormal(Model,u,v)
 
 %given a parameter (u,v) returns the normal to the surface at the point specified (u,v)
 
-wx = zeros(Model.nu + 1,Model.nu + 1);
+wx = zeros(Model.nu + 1,Model.nv + 1);
 wy = wx;
 wz = wx;
 w = wx;
 for i=1:Model.nu + 1
-	for j=1:Model.nu + 1
+	for j=1:Model.nv + 1
 		wx(i,j) = Model.Pw(i,j).x;
 		wy(i,j) = Model.Pw(i,j).y;
 		wz(i,j) = Model.Pw(i,j).z;
