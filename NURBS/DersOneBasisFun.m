@@ -6,6 +6,7 @@ if (u < U(i) || u >= U(i+p+1))
     for k=0:n
         ders(k+1) = 0;  
     end
+    ders2 = ders(k+1);
     return
 end
 
@@ -30,14 +31,14 @@ for k=1:p
             N(j+1,k+1) = saved;
             saved = 0;
         else
-            temp = N(j+2,k)/(Uright - Uleft);
+            tmp = N(j+2,k)/(Uright - Uleft);
             N(j+1,k+1) = saved + (Uright-u)*tmp;
             saved = (u-Uleft)*tmp;
         end
     end
 end
 
-ders(1) = N(1,p);
+ders(1) = N(1,p+1);
 
 for k=1:n
     for j=0:k
@@ -51,14 +52,14 @@ for k=1:n
         end
         for j=0:k-jj
             Uleft = U(i+j+1);
-            Uright = U(i+j+p+jj+1);
+            Uright = U(i+j+p-k+jj+1);
             if ND(j+2) == 0
                 ND(j+1) = (p-k+jj)*saved;
                 saved = 0;
             else
-                temp = ND(j+1)/(Uright - Uleft);
-                ND(j+1) = (p-k+jj)*(saved-temp);
-                saved = temp;
+                tmp = ND(j+2)/(Uright - Uleft);
+                ND(j+1) = (p-k+jj)*(saved-tmp);
+                saved = tmp;
             end
         end
     end
