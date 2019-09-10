@@ -39,6 +39,7 @@ classdef Geometry < handle
                     temp(i) = CPOINT(obj.PX(i),obj.PY(i),obj.PZ(i),obj.weight(i),0);
                 end
                 obj.Pw = temp;
+                obj.NormalizeKnotVector;
             end
             
             if strcmp(varargin{1},'surf') == 1
@@ -60,6 +61,7 @@ classdef Geometry < handle
                     end
                 end
                 obj.Pw = temp;
+                obj.NormalizeKnotVector;
             end
             
             if strcmp(varargin{1},'volume') == 1
@@ -86,6 +88,7 @@ classdef Geometry < handle
                     end
                 end
                 obj.Pw = temp;
+                obj.NormalizeKnotVector;
             
             end
         end
@@ -204,7 +207,79 @@ classdef Geometry < handle
     
   
     
-end
+        end
+
+        function [] = NormalizeKnotVector(obj)
+            
+            if strcmp(obj.type,'curve')
+                
+                if obj.U(1) < 0
+                    obj.U = obj.U - obj.U(1);
+                elseif obj.U(1) > 0
+                    obj.U = obj.U + (0 - obj.U(1));
+                end
+                
+                if obj.U(end) > 1
+                    obj.U = obj.U/obj.U(end);
+                end
+                
+            elseif strcmp(obj.type,'surf')
+                
+                if obj.U(1) < 0
+                    obj.U = obj.U - obj.U(1);
+                elseif obj.U(1) > 0
+                    obj.U = obj.U + (0 - obj.U(1));
+                end
+                
+                if obj.U(end) > 1
+                    obj.U = obj.U/obj.U(end);
+                end
+                %
+                if obj.V(1) < 0
+                    obj.V = obj.V - obj.V(1);
+                elseif obj.V(1) > 0
+                    obj.V = obj.V + (0 - obj.V(1));
+                end
+                
+                if obj.V(end) > 1
+                    obj.V = obj.V/obj.V(end);
+                end
+                %
+            elseif strcmp(obj.type,'volume')
+                %
+                if obj.U(1) < 0
+                    obj.U = obj.U - obj.U(1);
+                elseif obj.U(1) > 0
+                    obj.U = obj.U + (0 - obj.U(1));
+                end
+                
+                if obj.U(end) > 1
+                    obj.U = obj.U/obj.U(end);
+                end
+                %
+                if obj.V(1) < 0
+                    obj.V = obj.V - obj.V(1);
+                elseif obj.V(1) > 0
+                    obj.V = obj.V + (0 - obj.V(1));
+                end
+                
+                if obj.V(end) > 1
+                    obj.V = obj.V/obj.V(end);
+                end
+                %
+                if obj.W(1) < 0
+                    obj.W = obj.W - obj.W(1);
+                elseif obj.W(1) > 0
+                    obj.W = obj.W + (0 - obj.W(1));
+                end
+                
+                if obj.W(end) > 1
+                    obj.W = obj.W/obj.W(end);
+                end
+            end
+            
+        end
+                
            
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              
         function obj = KnotRefine(obj,X,dir)
@@ -375,7 +450,7 @@ end
                     
                 end
                 PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render,cpoints,isolines);
-                
+                %{
                 lower = min([min(min(min((obj.PX)))),min(min(min((obj.PY)))),min(min(min((obj.PZ))))]);
                 higher = max([max(max(max((obj.PX)))),max(max(max((obj.PY)))),max(max(max((obj.PZ))))]);
                 
@@ -394,6 +469,7 @@ end
                     ylim([-higher/2 higher/2]);
                     zlim([lower higher]);
                 end
+                %}
                 xlabel('x [m]','FontWeight','bold','FontSize',23)
                 ylabel('y [m]','FontWeight','bold','FontSize',23)
                 zlabel('z [m]','FontWeight','bold','FontSize',23)
