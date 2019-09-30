@@ -21,6 +21,9 @@ elseif strcmp(render,'medium') == 1
 uu = linspace(U(1),U(end),100);
 end
 
+uu = [uu unique(U)];
+uu = unique(sort(uu));
+
 for i = numel(uu):-1:1
     S(i).x = 0;
     S(i).y = 0;

@@ -20,6 +20,9 @@ elseif strcmp(render,'medium') == 1
 vv = linspace(V(1),V(end),100);
 end
 
+vv = [vv unique(V)];
+vv = unique(sort(vv));
+
 for j = numel(vv):-1:1
           S(j).x = 0;
           S(j).y = 0;

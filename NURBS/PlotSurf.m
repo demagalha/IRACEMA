@@ -24,6 +24,12 @@ uu = linspace(U(1),U(end),100);
 vv = linspace(V(1),V(end),100);
 end
 
+uu = [uu unique(U)];
+uu = unique(sort(uu));
+
+vv = [vv unique(V)];
+vv = unique(sort(vv));
+
  for i = numel(uu):-1:1
       for j = numel(vv):-1:1
           S(i,j).x = 0;
