@@ -5,11 +5,11 @@ if isolines
     
     Unique = unique(U);
     spans = numel(Unique)-1;
-    uu = zeros(spans,1000/spans);
+    uu = zeros(spans,floor(1000/spans));
     for i=1:spans
-        uu(i,:) = linspace(Unique(i),Unique(i+1),1000/spans);
+        uu(i,:) = linspace(Unique(i),Unique(i+1),floor(1000/spans));
     end
-    C(1:spans,1:1000/spans) = CPOINT(0,0,0,0,1);
+    C(1:spans,1:floor(1000/spans)) = CPOINT(0,0,0,0,1);
     
     for i=1:spans
         for j=1:numel(uu(1,:))
