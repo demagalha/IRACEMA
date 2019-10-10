@@ -43,6 +43,6 @@ for j=1:numel(vv)
     SY(j) = S(j).y;
     SZ(j) = S(j).z;
 end
-plot3(SX,SY,SZ,'-','color','blue','LineWidth',2);
+plot3(SX,SY,SZ,'-','color','black','LineWidth',2);
 
 end

@@ -45,6 +45,6 @@ for i=1:numel(uu)
 end
 
 
-plot3(SX,SY,SZ,'-','color','blue','LineWidth',2);
+plot3(SX,SY,SZ,'-','color','black','LineWidth',2);
 
 end
