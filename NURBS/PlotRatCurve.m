@@ -1,11 +1,48 @@
-function  [ ] = PlotRatCurve(n,p,U,Pw,CPTS,NOZ)
+function  [ ] = PlotRatCurve(n,p,U,Pw,CPTS,isolines)
 
 
-uu = linspace(U(1),U(end),1000);
-C(1:numel(uu)) = CPOINT(0,0,0,0,1);
+if isolines
+    
+    Unique = unique(U);
+    spans = numel(Unique)-1;
+    uu = zeros(spans,1000/spans);
+    for i=1:spans
+        uu(i,:) = linspace(Unique(i),Unique(i+1),1000/spans);
+    end
+    C(1:spans,1:1000/spans) = CPOINT(0,0,0,0,1);
+    
+    for i=1:spans
+        for j=1:numel(uu(1,:))
+            C(i,j) = CCurvePoint2(n,p,U,Pw,uu(i,j));
+        end
+    end
+    hold on;
+    for i=1:spans
+        plot3([C(i,:).x],[C(i,:).y],[C(i,:).z]);
+    end
+    
+    el = unique(U);
+    EL(1:numel(el)) = CPOINT(0,0,0,0,1);
 
-for i=1:numel(uu)
-    C(i) = CCurvePoint2(n,p,U,Pw,uu(i));
+    for i=1:numel(el)
+        EL(i) = CCurvePoint2(n,p,U,Pw,el(i));
+    end
+    
+    plot3([EL.x],[EL.y],[EL.z],'s','MarkerEdgeColor',[1 0 0], 'MarkerFaceColor',[1 0 0]);
+    
+else
+    
+    
+    uu = linspace(U(1),U(end),1000);
+    C(1:numel(uu)) = CPOINT(0,0,0,0,1);
+    
+    for i=1:numel(uu)
+    	C(i) = CCurvePoint2(n,p,U,Pw,uu(i));
+    end
+    
+    hold on;
+    plot3([C.x],[C.y],[C.z],'color','blue');
+
 end
 
 if CPTS == 1 %%wants to plot CPTS
@@ -15,23 +52,10 @@ if CPTS == 1 %%wants to plot CPTS
         wy(i) = Pw(i).y/Pw(i).w;
         wz(i) = Pw(i).z/Pw(i).w;
     end
-
-    if NOZ == 1
-        plot([C.x],[C.y],'color','blue');
-    else
-        plot3([C.x],[C.y],[C.z],'color','blue');
-    end
     
-    hold on;
     plot3(wx,wy,wz,'--','color','black');
     plot3(wx,wy,wz,'o','MarkerEdgeColor',[1 0 0], 'MarkerFaceColor',[1 0 0]);
-
-else
-    if NOZ == 1
-        plot([C.x],[C.y],'color','blue');
-    else
-        plot3([C.x],[C.y],[C.z],'color','blue');
-    end
 end
+
 
 end

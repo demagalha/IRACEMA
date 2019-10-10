@@ -3,7 +3,7 @@ function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W,render,cpoints,isoli
 Unique = unique(U);
 Vnique = unique(V);
 Wnique = unique(W);
-
+%
  %%%%%%%%%%%%%%%%%%%% plotar as faces
  %%%%%%%%%%%%%%%%%%% face 1
  %%%%%%%%%%%%%%%%%%%%  ---------------
@@ -184,27 +184,29 @@ if isolines
 end
 
 light;
-
+%
 if cpoints
     for i = 1 : size(PX,3)
         plot3(PX(:,:,i),PY(:,:,i),PZ(:,:,i),'-','color','black','LineWidth',2); hold on;
         plot3((PX(:,:,i))',(PY(:,:,i))',(PZ(:,:,i))','-','color','black','LineWidth',2);
     end
+    
     for i = 1 : size(PX,2)
         PX_(:,:)=PX(:,i,:);
         PY_(:,:)=PY(:,i,:);
         PZ_(:,:)=PZ(:,i,:);
-        plot3(PX_,PY_,PZ_,'color','black','LineWidth',2);
-        plot3(PX_',PY_',PZ_','color','black','LineWidth',2);
+        plot3(PX_,PY_,PZ_,'color','red','LineWidth',2);
+        plot3(PX_',PY_',PZ_','color','red','LineWidth',2);
     end
     clear PX_ PY_ PZ_
     for i = 1 : size(PX,1)
         PX_(:,:)=PX(i,:,:);
         PY_(:,:)=PY(i,:,:);
         PZ_(:,:)=PZ(i,:,:);
-        plot3(PX_,PY_,PZ_,'color','black','LineWidth',2);
-        plot3(PX_',PY_',PZ_','color','black','LineWidth',2);
+        plot3(PX_,PY_,PZ_,'color','red','LineWidth',2);
+        plot3(PX_',PY_',PZ_','color','red','LineWidth',2);
     end
+    
 end
  
 end 

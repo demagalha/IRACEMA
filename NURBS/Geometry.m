@@ -418,28 +418,48 @@ classdef Geometry < handle
         function [] = plot_geo(obj,render,cpoints,isolines)
             
             if strcmp(obj.type,'curve') == 1
-                if nargin <= 2
-                    PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,1,0);
-                elseif nargin == 3
-                    PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,cpoints,0);
+                if nargin <= 3
+                    cpoints = 0;
+                    isolines = 0;
                 end
+                
+                PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,cpoints,isolines);
                     
             
             elseif strcmp(obj.type,'surf') == 1
                 
-                if (nargin == 1)
+                if (nargin <= 3)
                     render = 'medium';
+                    cpoints = 0;
+                    isolines = 0;
+                    
                 end
                 PlotSurf(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render);
                 hold on;
-                plot3(obj.PX,obj.PY,obj.PZ,'color','black','LineWidth',2);
-                plot3((obj.PX)',(obj.PY)',(obj.PZ)','color','black','LineWidth',2);
                 
-                lower = min([min(min((obj.PX))),min(min((obj.PY))),min(min((obj.PZ)))]);
-                higher = max([max(max((obj.PX))),max(max((obj.PY))),max(max((obj.PZ)))]);
-                xlim([lower higher]);
-                ylim([lower higher]);
-                zlim([lower higher]);
+                if isolines
+                    Unique = unique(obj.U);
+                    Vnique = unique(obj.V);
+                    for i=1:numel(Unique)
+                        PlotSurfPatches_1(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,Unique(i));
+                    end
+    
+                    for j=1:numel(Vnique)
+                        PlotSurfPatches_2(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,Vnique(j));
+                    end
+                end
+                
+                if cpoints
+                    plot3(obj.PX,obj.PY,obj.PZ,'color','red','LineWidth',2);
+                    plot3((obj.PX)',(obj.PY)',(obj.PZ)','color','red','LineWidth',2);
+                    plot3(obj.PX,obj.PY,obj.PZ,'o','MarkerEdgeColor',[1 0 0], 'MarkerFaceColor',[1 0 0]);
+                end
+                light;
+                %lower = min([min(min((obj.PX))),min(min((obj.PY))),min(min((obj.PZ)))]);
+                %higher = max([max(max((obj.PX))),max(max((obj.PY))),max(max((obj.PZ)))]);
+                %xlim([lower higher]);
+                %ylim([lower higher]);
+                %zlim([lower higher]);
                 
             elseif strcmp(obj.type,'volume') == 1
                 
