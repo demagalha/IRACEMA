@@ -321,6 +321,21 @@ classdef Geometry < handle
             end
             
         end
+        
+        function [] = reset_PlotProp(obj)
+            
+            if strcmp(obj.type,'curve')
+                obj.PlotProp = struct('RGB',[0 0 1],'LineSize',2,'ControlRGB',[0 0 0],'IsoRGB',[],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
+            elseif strcmp(obj.type,'surf')
+                obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
+            elseif strcmp(obj.type,'volume')
+                obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
+            else
+                disp('Type not recognized');
+            end
+        end
+                
+                
             
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              
         function obj = KnotRefine(obj,X,dir)
