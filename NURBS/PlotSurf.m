@@ -1,4 +1,4 @@
-function [] = PlotSurf(PX,PY,PZ,PW,nu,pu,U,nv,pv,V,render)
+function [] = PlotSurf(PX,PY,PZ,PW,nu,pu,U,nv,pv,V,render,RGB)
 
 tam(1) = nu+1; tam(2) = nv+1;
 
@@ -57,7 +57,7 @@ end
 
 
 h = surf(SX,SY,SZ);
-set(h,'edgecolor','none','facecolor',[.1 .9 .1])
+set(h,'edgecolor','none','facecolor',RGB)
 
 
 end

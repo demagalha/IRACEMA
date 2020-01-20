@@ -1,4 +1,4 @@
-function  [ ] = PlotRatCurve(n,p,U,Pw,CPTS,isolines)
+function  [ ] = PlotRatCurve(n,p,U,Pw,CPTS,isolines,PlotStruct)
 
 
 if isolines
@@ -18,7 +18,7 @@ if isolines
     end
     hold on;
     for i=1:spans
-        plot3([C(i,:).x],[C(i,:).y],[C(i,:).z]);
+        plot3([C(i,:).x],[C(i,:).y],[C(i,:).z],'LineWidth',PlotStruct.LineSize);
     end
     
     el = unique(U);
@@ -28,7 +28,7 @@ if isolines
         EL(i) = CCurvePoint2(n,p,U,Pw,el(i));
     end
     
-    plot3([EL.x],[EL.y],[EL.z],'s','MarkerEdgeColor',[1 0 0], 'MarkerFaceColor',[1 0 0]);
+    plot3([EL.x],[EL.y],[EL.z],'s','MarkerEdgeColor',PlotStruct.MarkerCPTRGB, 'MarkerFaceColor',PlotStruct.MarkerCPTRGB);
     
 else
     
@@ -41,7 +41,7 @@ else
     end
     
     hold on;
-    plot3([C.x],[C.y],[C.z],'color','blue');
+    plot3([C.x],[C.y],[C.z],'color',PlotStruct.RGB,'LineWidth',PlotStruct.LineSize);
 
 end
 
@@ -53,8 +53,8 @@ if CPTS == 1 %%wants to plot CPTS
         wz(i) = Pw(i).z/Pw(i).w;
     end
     
-    plot3(wx,wy,wz,'--','color','black');
-    plot3(wx,wy,wz,'o','MarkerEdgeColor',[1 0 0], 'MarkerFaceColor',[1 0 0]);
+    plot3(wx,wy,wz,'--','color',PlotStruct.ControlRGB);
+    plot3(wx,wy,wz,PlotStruct.MarkerCPT,'MarkerEdgeColor',PlotStruct.MarkerCPTRGB, 'MarkerFaceColor',PlotStruct.MarkerCPTRGB);
 end
 
 

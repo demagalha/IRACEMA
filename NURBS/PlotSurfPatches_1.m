@@ -1,4 +1,4 @@
-function [] = PlotSurfPatches_1(PX,PY,PZ,PW,nu,pu,U,nv,pv,V,render,a)
+function [] = PlotSurfPatches_1(PX,PY,PZ,PW,nu,pu,U,nv,pv,V,render,a,PlotStruct)
 
 tam(1) = nu+1; tam(2) = nv+1;
 
@@ -43,6 +43,6 @@ for j=1:numel(vv)
     SY(j) = S(j).y;
     SZ(j) = S(j).z;
 end
-plot3(SX,SY,SZ,'-','color','black','LineWidth',2);
+plot3(SX,SY,SZ,'-','color',PlotStruct.IsoRGB,'LineWidth',PlotStruct.LineSize);
 
 end

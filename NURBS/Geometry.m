@@ -15,6 +15,7 @@ classdef Geometry < handle
         PZ;
         weight;
         Pw;
+        PlotProp;
     end
     
     methods
@@ -25,7 +26,7 @@ classdef Geometry < handle
                 return
             end
             
-            if strcmp(varargin{1},'curve') == 1
+            if strcmp(varargin{1},'curve')
                 
                 obj.type = varargin{1};
                 obj.pu = varargin{2};
@@ -40,9 +41,10 @@ classdef Geometry < handle
                 end
                 obj.Pw = temp;
                 obj.NormalizeKnotVector;
+                obj.PlotProp = struct('RGB',[0 0 1],'LineSize',2,'ControlRGB',[0 0 0],'IsoRGB',[],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
             end
             
-            if strcmp(varargin{1},'surf') == 1
+            if strcmp(varargin{1},'surf')
 
                 obj.type = varargin{1};
                 obj.pu = varargin{2};
@@ -62,9 +64,10 @@ classdef Geometry < handle
                 end
                 obj.Pw = temp;
                 obj.NormalizeKnotVector;
+                obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
             end
             
-            if strcmp(varargin{1},'volume') == 1
+            if strcmp(varargin{1},'volume')
                 
                 obj.type = varargin{1};
                 obj.pu = varargin{2};
@@ -89,7 +92,7 @@ classdef Geometry < handle
                 end
                 obj.Pw = temp;
                 obj.NormalizeKnotVector;
-            
+                obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
             end
         end
                 
@@ -280,7 +283,45 @@ classdef Geometry < handle
             
         end
                 
-           
+
+        function [] = set_PlotProp(obj,Color,LineSize,ControlColor,IsoColor,Marker,MarkerColor)
+            
+            switch nargin
+                case 2
+                    obj.PlotProp.RGB = Color;
+                case 3
+                    obj.PlotProp.RGB = Color;
+                    obj.PlotProp.LineSize = LineSize;
+                case 4
+                    obj.PlotProp.RGB = Color;
+                    obj.PlotProp.LineSize = LineSize;
+                    obj.PlotProp.ControlRGB = ControlColor;
+                case 5
+                    obj.PlotProp.RGB = Color;
+                    obj.PlotProp.LineSize = LineSize;
+                    obj.PlotProp.ControlRGB = ControlColor;
+                    obj.PlotProp.IsoRGB = IsoColor;
+                case 6
+                    obj.PlotProp.RGB = Color;
+                    obj.PlotProp.LineSize = LineSize;
+                    obj.PlotProp.ControlRGB = ControlColor;
+                    obj.PlotProp.MarkerCPT = Marker;
+                    obj.PlotProp.IsoRGB = IsoColor;
+                    obj.PlotProp.MarkerCPT = Marker;
+                case 7
+                    obj.PlotProp.RGB = Color;
+                    obj.PlotProp.LineSize = LineSize;
+                    obj.PlotProp.ControlRGB = ControlColor;
+                    obj.PlotProp.MarkerCPT = Marker;
+                    obj.PlotProp.IsoRGB = IsoColor;
+                    obj.PlotProp.MarkerCPT = Marker;
+                    obj.PlotProp.MarkerCPTRGB = MarkerColor;
+                otherwise
+                    disp('Invalid input');
+            end
+            
+        end
+            
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              
         function obj = KnotRefine(obj,X,dir)
             
@@ -417,16 +458,16 @@ classdef Geometry < handle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function [] = plot_geo(obj,render,cpoints,isolines)
             
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 if nargin <= 3
                     cpoints = 0;
                     isolines = 0;
                 end
                 
-                PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,cpoints,isolines);
+                PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,cpoints,isolines,obj.PlotProp);
                     
             
-            elseif strcmp(obj.type,'surf') == 1
+            elseif strcmp(obj.type,'surf')
                 
                 if (nargin <= 3)
                     render = 'medium';
@@ -434,34 +475,30 @@ classdef Geometry < handle
                     isolines = 0;
                     
                 end
-                PlotSurf(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render);
+                PlotSurf(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,obj.PlotProp.RGB);
                 hold on;
                 
                 if isolines
                     Unique = unique(obj.U);
                     Vnique = unique(obj.V);
                     for i=1:numel(Unique)
-                        PlotSurfPatches_1(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,Unique(i));
+                        PlotSurfPatches_1(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,Unique(i),obj.PlotProp);
                     end
     
                     for j=1:numel(Vnique)
-                        PlotSurfPatches_2(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,Vnique(j));
+                        PlotSurfPatches_2(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,Vnique(j),obj.PlotProp);
                     end
                 end
                 
                 if cpoints
-                    plot3(obj.PX,obj.PY,obj.PZ,'color','red','LineWidth',2);
-                    plot3((obj.PX)',(obj.PY)',(obj.PZ)','color','red','LineWidth',2);
-                    plot3(obj.PX,obj.PY,obj.PZ,'o','MarkerEdgeColor',[1 0 0], 'MarkerFaceColor',[1 0 0]);
+                    plot3(obj.PX,obj.PY,obj.PZ,'color',obj.PlotProp.ControlRGB,'LineWidth',obj.PlotProp.LineSize);
+                    plot3((obj.PX)',(obj.PY)',(obj.PZ)','color',obj.PlotProp.ControlRGB,'LineWidth',obj.PlotProp.LineSize);
+                    plot3(obj.PX,obj.PY,obj.PZ,obj.PlotProp.MarkerCPT,'MarkerEdgeColor',obj.PlotProp.MarkerCPTRGB, 'MarkerFaceColor',obj.PlotProp.MarkerCPTRGB);
                 end
                 light;
-                %lower = min([min(min((obj.PX))),min(min((obj.PY))),min(min((obj.PZ)))]);
-                %higher = max([max(max((obj.PX))),max(max((obj.PY))),max(max((obj.PZ)))]);
-                %xlim([lower higher]);
-                %ylim([lower higher]);
-                %zlim([lower higher]);
+
                 
-            elseif strcmp(obj.type,'volume') == 1
+            elseif strcmp(obj.type,'volume')
                 
                 if (nargin == 1)
                     render = 'medium';
@@ -469,27 +506,8 @@ classdef Geometry < handle
                     isolines = 0;
                     
                 end
-                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render,cpoints,isolines);
-                %{
-                lower = min([min(min(min((obj.PX)))),min(min(min((obj.PY)))),min(min(min((obj.PZ))))]);
-                higher = max([max(max(max((obj.PX)))),max(max(max((obj.PY)))),max(max(max((obj.PZ))))]);
-                
-                if higher == max(max(max((obj.PY))))
-                    xlim([-higher/2 higher/2]);
-                    ylim([lower higher]);
-                    zlim([-higher/2 higher/2]);
-                
-                elseif higher == max(max(max((obj.PX))))
-                    xlim([lower higher]);
-                    ylim([-higher/2 higher/2]);
-                    zlim([-higher/2 higher/2]);
-                    
-                elseif higher == max(max(max((obj.PZ))))
-                    xlim([-higher/2 higher/2]);
-                    ylim([-higher/2 higher/2]);
-                    zlim([lower higher]);
-                end
-                %}
+                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render,cpoints,isolines,obj.PlotProp);
+
                 xlabel('x [m]','FontWeight','bold','FontSize',23)
                 ylabel('y [m]','FontWeight','bold','FontSize',23)
                 zlabel('z [m]','FontWeight','bold','FontSize',23)

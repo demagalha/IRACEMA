@@ -1,4 +1,4 @@
-function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W,render,cpoints,isolines)
+function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W,render,cpoints,isolines,PlotStruct)
 
 Unique = unique(U);
 Vnique = unique(V);
@@ -21,16 +21,16 @@ FY(:,:) = PY(:,:,1);
 FZ(:,:) = PZ(:,:,1);
 FW(:,:) = w(:,:,1);
 
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
+PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,PlotStruct.RGB);
     hold on;
     
 if isolines
     for i=1:numel(Unique)
-            PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Unique(i));
+            PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Unique(i),PlotStruct);
     end
     
     for j=1:numel(Vnique)
-        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Vnique(j));
+        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Vnique(j),PlotStruct);
     end
 end
         
@@ -49,15 +49,15 @@ FY(:,:) = PY(:,:,end);
 FZ(:,:) = PZ(:,:,end);
 FW(:,:) = w(:,:,end);
 
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render);
+PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,PlotStruct.RGB);
 
 if isolines
     for i=1:numel(Unique)
-        PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Unique(i));
+        PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Unique(i),PlotStruct);
     end
 
     for j=1:numel(Vnique)
-        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Vnique(j));
+        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,Vnique(j),PlotStruct);
     end
 end
 
@@ -82,16 +82,16 @@ end
  FW = FW';
  
  
-PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
+PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,PlotStruct.RGB);
 
 if isolines
     
     for i=1:numel(Wnique)
-        PlotSurfPatches_1(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Wnique(i));
+        PlotSurfPatches_1(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Wnique(i),PlotStruct);
     end
 
     for j=1:numel(Vnique)
-        PlotSurfPatches_2(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Vnique(j));
+        PlotSurfPatches_2(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Vnique(j),PlotStruct);
     end
 end
      
@@ -115,15 +115,15 @@ end
  FW(:,:) = w(end,:,:);
  FW = FW';
  
-PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render);
+PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,PlotStruct.RGB);
 
 if isolines
     for i=1:numel(Wnique)
-        PlotSurfPatches_1(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Wnique(i));
+        PlotSurfPatches_1(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Wnique(i),PlotStruct);
     end
 
     for j=1:numel(Vnique)
-        PlotSurfPatches_2(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Vnique(j));
+        PlotSurfPatches_2(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,Vnique(j),PlotStruct);
     end
 end
      
@@ -143,15 +143,15 @@ end
  FZ(:,:) = PZ(:,1,:);
  FW(:,:) = w(:,1,:);
  
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render);
+PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,PlotStruct.RGB);
 
 if isolines
     for i=1:numel(Unique)
-        PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Unique(i));
+        PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Unique(i),PlotStruct);
     end
 
     for j=1:numel(Wnique)
-        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Wnique(j));
+        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Wnique(j),PlotStruct);
     end
 end
      
@@ -171,15 +171,15 @@ end
  FZ(:,:) = PZ(:,end,:);
  FW(:,:) = w(:,end,:);
  
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render);
+PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,PlotStruct.RGB);
 
 if isolines    
     for i=1:numel(Unique)
-        PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Unique(i));
+        PlotSurfPatches_1(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Unique(i),PlotStruct);
     end
 
     for j=1:numel(Wnique)
-        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Wnique(j));
+        PlotSurfPatches_2(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,Wnique(j),PlotStruct);
     end
 end
 
@@ -187,24 +187,24 @@ light;
 %
 if cpoints
     for i = 1 : size(PX,3)
-        plot3(PX(:,:,i),PY(:,:,i),PZ(:,:,i),'-','color','black','LineWidth',2); hold on;
-        plot3((PX(:,:,i))',(PY(:,:,i))',(PZ(:,:,i))','-','color','black','LineWidth',2);
+        plot3(PX(:,:,i),PY(:,:,i),PZ(:,:,i),'-','color',PlotStruct.ControlRGB,'LineWidth',PlotStruct.LineSize); hold on;
+        plot3((PX(:,:,i))',(PY(:,:,i))',(PZ(:,:,i))','-','color',PlotStruct.ControlRGB,'LineWidth',PlotStruct.LineSize);
     end
     
     for i = 1 : size(PX,2)
         PX_(:,:)=PX(:,i,:);
         PY_(:,:)=PY(:,i,:);
         PZ_(:,:)=PZ(:,i,:);
-        plot3(PX_,PY_,PZ_,'color','red','LineWidth',2);
-        plot3(PX_',PY_',PZ_','color','red','LineWidth',2);
+        plot3(PX_,PY_,PZ_,'color',PlotStruct.ControlRGB,'LineWidth',PlotStruct.LineSize);
+        plot3(PX_',PY_',PZ_','color',PlotStruct.ControlRGB,'LineWidth',PlotStruct.LineSize);
     end
     clear PX_ PY_ PZ_
     for i = 1 : size(PX,1)
         PX_(:,:)=PX(i,:,:);
         PY_(:,:)=PY(i,:,:);
         PZ_(:,:)=PZ(i,:,:);
-        plot3(PX_,PY_,PZ_,'color','red','LineWidth',2);
-        plot3(PX_',PY_',PZ_','color','red','LineWidth',2);
+        plot3(PX_,PY_,PZ_,'color',PlotStruct.ControlRGB,'LineWidth',PlotStruct.LineSize);
+        plot3(PX_',PY_',PZ_','color',PlotStruct.ControlRGB,'LineWidth',PlotStruct.LineSize);
     end
     
 end
