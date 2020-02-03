@@ -2,7 +2,7 @@ a = mfilename('fullpath');
 IGA = strrep(a,'startup','IGA');
 Examples = strrep(a,'startup','Examples');
 NURBS = strrep(a,'startup','NURBS');
-Models = strrep(a,'startup','Models')
+Models = strrep(a,'startup','Models');
 
 addpath (IGA)
 addpath (Examples)
