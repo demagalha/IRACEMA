@@ -35,7 +35,7 @@
 % F                 - Force Array (currently disabled)
 %--------------------------------------------------------------------------
 % This function only works for Volumetric Patches (u,v,w directions).
-function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
+function [K, F, IEN] = ElastoAssemble(Model,MatPropMatrix,RHO)
     D = MatPropMatrix;
     [INN, IEN, nel, nen] = Model.get_connectivity;
     ID = reshape(1:max(max(IEN))*3,3,max(max(IEN)));
@@ -64,7 +64,8 @@ function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
     M = K;
     N_DOF = numel(INN);
     N_ELE_DOF = nen*3;
-
+%     check1 = min(INN);
+%     check2 = max(INN);    
     %% Assembly
     for e=1:nel % Loop Through Elements
         ni = INN(IEN(1,e),1);
@@ -75,9 +76,22 @@ function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
             continue
         end
         K_e = zeros(3*nen,3*nen);
-        M_e = K_e;
-%         F_e = zeros(3*nen,1); Currently disabled.
+        F_e = zeros(nen,3);
+%         cond1 = (ni == check1(1) || nj == check1(2) || nk == check1(3));
+%         cond2 = (ni == check2(1) || nj == check2(2) || nk == check2(3));
+%         if cond1 || cond2
+%             % If on the boundary, use Gauss-Legendre Quadrature
+%             [u, wu] = getGP(pu);
+%             [v, wv] = getGP(pv);
+%             [w, ww] = getGP(pw);
+%         else
+% % %             % If on the interior, use Cauchy-Galerkin Points for Quadrature
+%             [u, wu] = getCG(pu);
+%             [v, wv] = getCG(pv);
+%             [w, ww] = getCG(pw);
+%         end
 
+%         F_e = zeros(3*nen,1); Currently disabled.
         for i=1:N_QUAD_U % Loop through U quadrature points
             for j=1:N_QUAD_V % Loop through V quadrature points
                 for k=1:N_QUAD_W % Loop through W quadrature points

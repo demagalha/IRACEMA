@@ -6,21 +6,21 @@ load RectangularLeissa15.mat
 load RectangularLeissa15_2.mat
 
 %REFINEMENT
-%{
-Model.DegreeElevate(2,1);
-Model.DegreeElevate(3,2);
-Model.DegreeElevate(1,3);
+tic
+Model.DegreeElevate(6,1);
+Model.DegreeElevate(6,2);
+Model.DegreeElevate(6,3);
 
-Model2.DegreeElevate(2,1);
-Model2.DegreeElevate(3,2);
-Model2.DegreeElevate(1,3);
-%}
+Model2.DegreeElevate(6,1);
+Model2.DegreeElevate(6,2);
+Model2.DegreeElevate(6,3);
 
-Model.KnotRefine(0.05:0.05:0.95,1);
-Model.KnotRefine(0.05:0.05:0.95,2);
 
-Model2.KnotRefine(0.05:0.05:0.95,1);
-Model2.KnotRefine(0.05:0.05:0.95,2);
+% Model.KnotRefine(0.05:0.05:0.95,1);
+% Model.KnotRefine(0.05:0.05:0.95,2);
+% 
+% Model2.KnotRefine(0.05:0.05:0.95,1);
+% Model2.KnotRefine(0.05:0.05:0.95,2);
 
 %END OF REFINEMENT
 
@@ -92,4 +92,5 @@ K = sparse(K);
 M = sparse(M);
 [V,W] = eigs(K,M,16,'sm');
 omega = sqrt(diag(W));
+toc
 

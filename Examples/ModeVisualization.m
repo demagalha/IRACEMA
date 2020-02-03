@@ -1,7 +1,8 @@
 clear all
-close all
+% close all
 clc
-load('plate_modal.mat')
+load('circplate2.mat')
+
  B = Model.get_point_cell;
  u = cell(size(B));
  comb = u;
@@ -14,5 +15,17 @@ Modos = cell(sz2,1);
     end
     Modos{n_modo} = Geometry('volume',Model.pu,Model.U,Model.pv,Model.V,Model.pw,Model.W,comb);
  end
- 
+%  subplot(1,2,2)
  Modos{1}.plot_geo
+ shading interp
+ zlim([0 1])
+%  subplot(3,2,4)
+%  shading interp
+%  zlim([0 1])
+%  Modos{2}.plot_geo
+%  shading interp
+%  zlim([0 1])
+%  subplot(3,2,6)
+%  Modos{3}.plot_geo
+%  zlim([0 1])
+%  shading interp

@@ -27,19 +27,24 @@ clc
 % presented by Cottrell, Austin, Reali, Bazilev and Hughes in the
 % 2006 "Isogeometric Analysis of Structural Vibrations" paper
 
-%% Pre-processing
+%% Pre-processing 
+tic
     load circplate_coarse.mat
 % Elevate pu to 4, pv to 5 and pw to 2
 % u = 1st, v = 2nd, w = 3rd
-    Model.DegreeElevate(2,1); % augment 2 degrees in 1st parametric direction 
-    Model.DegreeElevate(3,2); % augment 3 degrees in 2nd parametric direction
-    Model.DegreeElevate(1,3); % augment 1 degree in 3rd parametric direction
+    Model.DegreeElevate(5,1); % augment 2 degrees in 1st parametric direction 
+    Model.DegreeElevate(5,2); % augment 3 degrees in 2nd parametric direction
+    Model.DegreeElevate(2,3); % augment 1 degree in 3rd parametric direction
+    Model.KnotRefine([0.25:0.25:0.75],1);
+    Model.KnotRefine([0.25:0.25:0.75],2);
+    Model.KnotRefine([0.25:0.25:0.75],3);
+
 % Note that our disc is parametrized differently than the article's. We use
 % only one element to describe the whole geometry, while the article uses
 % an eight element mesh. So we need to refine the mesh a little bit. We
 % will add 2 knots in u and v directions
-    Model.KnotRefine([1/2],1);
-    Model.KnotRefine([1/2],2);
+%     Model.KnotRefine(1/7:1/7:6/7,1);
+%     Model.KnotRefine([1/2],2);
 % This way, there is 9 elements in total, not 8, since our parametrization
 % is slightly different. As you will notice, the autovalues will also be
 % different.
@@ -57,10 +62,11 @@ clc
 % grab all elements that are outside this radius.
     ID = reshape(1:max(max(IEN))*3,3,max(max(IEN)));
     constNod = [];
+    P = Model.get_point_cell;
     for i = 1:numel(P)
             if (((P{i}(1)-2)^2 + (P{i}(2)-2)^2)-4 >= 0)
-                P{i}(1)
-                P{i}(2)
+                P{i}(1);
+                P{i}(2);
                 constNod=[constNod i];
         end
     end
@@ -84,7 +90,8 @@ clc
 % anymore, we can turn them into sparses again to use the eigs() function.
     K = sparse(K);
     M = sparse(M);
+    toc
     [autovector,ome] = eigs(K,M,10,'sm');
-    omega = sqrt(ome);
+    omega = diag(sqrt(ome));
     clearvars -except K M autovector freq omega Model ID
     save('circplate.mat')

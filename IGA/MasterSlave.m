@@ -21,6 +21,7 @@ for i =1:numel(SurfCptsIndex{face1}.P)
 		if isequal(PP,PP2)
 			MS(count,:) = [SurfCptsIndex{face1}.P(i),SurfCptsIndex2{face2}.P(j)];
             count = count + 1;
+            break
 		end
 	end
 end

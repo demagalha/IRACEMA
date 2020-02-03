@@ -1,4 +1,4 @@
-%% MIT License
+% MIT License
 % 
 % Copyright (c) 2019 Guilherme Henrique da Silva and André Demetrio de Magalhães
 % 
@@ -169,6 +169,7 @@ end
 du_dq(1,1) = (U(nu+1)-U(nu))/2;
 du_dq(2,2) = (V(nv+1)-V(nv))/2;
 du_dq(3,3) = (W(nw+1)-W(nw))/2;
+
 
 for xx=1:3
     for yy=1:3

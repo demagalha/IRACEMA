@@ -119,4 +119,5 @@ end
 for i=1:numel(omega)
     fun_plot(i) = omega(i)/omega_t(i);
 end
-plot(coordinate,fun_plot)
+% clearvars -except coordinate fun_plot
+% save('rodp2.mat')
