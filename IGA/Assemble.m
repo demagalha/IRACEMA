@@ -35,7 +35,7 @@
 % F                 - Force Array (currently disabled)
 %--------------------------------------------------------------------------
 % This function only works for Volumetric Patches (u,v,w directions).
-function [K, F, IEN] = ElastoAssemble(Model,MatPropMatrix,RHO)
+function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
     D = MatPropMatrix;
     [INN, IEN, nel, nen] = Model.get_connectivity;
     ID = reshape(1:max(max(IEN))*3,3,max(max(IEN)));
@@ -76,7 +76,7 @@ function [K, F, IEN] = ElastoAssemble(Model,MatPropMatrix,RHO)
             continue
         end
         K_e = zeros(3*nen,3*nen);
-        F_e = zeros(nen,3);
+        M_e = zeros(nen,3);
 %         cond1 = (ni == check1(1) || nj == check1(2) || nk == check1(3));
 %         cond2 = (ni == check2(1) || nj == check2(2) || nk == check2(3));
 %         if cond1 || cond2
