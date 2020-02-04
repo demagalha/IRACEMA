@@ -10,8 +10,8 @@ Model = BuildHoledPlate(L,R);
 % Refinement
 Model.DegreeElevate(3,1);
 Model.DegreeElevate(4,2);
-Model.KnotRefine(0.2:0.2:0.8,1);
-Model.KnotRefine(0.2:0.2:0.8,2);
+Model.KnotRefine(1/11:1/11:1-1/11,1);
+Model.KnotRefine(1/11:1/11:1-1/11,2);
 
 % Material Properties
 E = 1e5;
@@ -100,7 +100,7 @@ for i=1:numel(P)
         f2Nod = [f2Nod i];
     end
 end
-T = 10;
+T = -10;
 
 sym1 = reshape(ID(2,sym1Nod),numel(ID(2,sym1Nod)),1);
 sym2 = reshape(ID(1,sym1Nod),numel(ID(1,sym1Nod)),1);
@@ -110,10 +110,10 @@ for i=1:numel(bc)
 end
 
 
-f1 = reshape(ID(2,f1Nod),numel(ID(2,f1Nod)),1);
+f1 = reshape(ID(1,f1Nod),numel(ID(1,f1Nod)),1);
 f1values = T*ones(size(f1));
 f2 = reshape(ID(1,f2Nod),numel(ID(1,f2Nod)),1);
-f2values = -T*ones(size(f2));
+f2values = T*ones(size(f2));
 fbc = [f1, f1values; f2, f2values];
 for i=1:length(fbc)
     F(fbc(i,1)) = fbc(i,2);
@@ -126,13 +126,106 @@ d = K\F;
 
 B = Model.get_point_cell;
 u = cell(size(B));
+uu = u;
 comb = u;
 scaling_factor = 33;
 
 for i=1:size(ID,2)
-    u{i} = scaling_factor*[d(2*(i-1)+1), d(2*(i-1)+2), 0, 0];
+    u{i} = scaling_factor*[full(d(ID(:,i)))' 0 0];
+    uu{i} = [full(d(ID(:,i)))' 0 1];
     comb{i} = B{i} +u{i};
 end
 
 DeformedModel = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,comb);
-DeformedModel.plot_geo('fine',0,1);
+% DeformedModel.plot_geo('fine',0,1);
+
+u = 1;
+v = 1;
+U = Model.U;
+pu = Model.pu;
+V = Model.V;
+pv = Model.pv;
+
+su = FindSpanLinear(length(U)-pu-2,pu,u,U);
+sv = FindSpanLinear(length(V)-pv-2,pv,v,V);
+
+NU = DersBasisFun(su,u,pu,1,U);
+N = NU(1,:);
+dN = NU(2,:);
+[~, si] = size(NU);
+
+MV = DersBasisFun(sv,v,pv,1,V);
+M = MV(1,:);
+dM = MV(2,:);
+[~,sj] = size(MV);
+clear NU MV
+
+P = Model.get_point_cell;
+weight = Model.weight;
+P = P(su-pu+1:su+1,sv-pv+1:sv+1);
+weight = weight(su-pu+1:su+1,sv-pv+1:sv+1);
+Q = 0;
+dQdu = 0;
+dQdv = 0;
+dBdu = zeros(size(B));
+dBdv = dBdu;
+B = zeros(1,si*sj);
+for idx=1:si*sj
+    [i,j] = ind2sub([si,sj],idx);
+    B(idx) = N(i)*M(j);
+    dBdu(idx) = dN(i)*M(j);
+    dBdv(idx) = N(i)*dM(j);
+    Q = Q+B(idx)*weight(idx);
+    dQdu = dQdu+ dBdu(idx)*weight(idx);
+    dQdv = dQdv+ dBdv(idx)*weight(idx);
+end
+R = zeros(1,si*sj);
+dRdu = zeros(size(R));
+dRdv = zeros(size(R));
+for idx=1:si*sj
+    [i,j] = ind2sub([si,sj],idx);
+    R(idx) = B(idx)/Q;
+    dRdu(idx) = dN(i)*M(j) - (R(idx)/Q)*dQdu;
+    dRdv(idx) = N(i)*dM(j) - (R(idx)/Q)*dQdv;
+end
+
+dR = zeros(2,length(R));
+dRdx = dR;
+dR(1,:) = dRdu;
+dR(2,:) = dRdv;
+dxdu = zeros(2);
+for idx=1:si*sj
+    [i,j] = ind2sub([si,sj],idx);
+    for xx=1:2
+        for yy=1:2
+            dxdu(xx,yy) = dxdu(xx,yy) +P{i,j}(xx)*dR(yy,idx);
+        end
+    end
+end
+dudx = inv(dxdu);
+
+for idx=1:si*sj
+    for xx=1:2
+        for yy=1:2
+            dRdx(xx,idx) = dRdx(xx,idx) +dR(yy,idx)*dudx(yy,xx);
+        end
+    end
+end
+Jmod = det(dxdu);
+[sz1, sz2] = size(uu);
+uu = uu(su-pu+1:su+1,sv-pv+1:sv+1);
+xx = zeros(numel(uu),1);
+yy = xx;
+for i=1:numel(uu)
+    xx(i) = uu{i}(1)*uu{i}(4);
+    yy(i) = uu{i}(2)*uu{i}(4);
+end
+
+sx = dRdx(1,:)*xx(:);
+sy = dRdx(2,:)*yy(:);
+sxy = dRdx(1,:)*yy(:) + dRdx(2,:)*xx(:);
+
+sigma = C*[sx; sy; sxy]
+
+
+    
