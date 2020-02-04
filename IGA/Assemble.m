@@ -76,7 +76,7 @@ function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
             continue
         end
         K_e = zeros(3*nen,3*nen);
-        M_e = zeros(nen,3);
+        M_e = zeros(3*nen,3*nen);
 %         cond1 = (ni == check1(1) || nj == check1(2) || nk == check1(3));
 %         cond2 = (ni == check2(1) || nj == check2(2) || nk == check2(3));
 %         if cond1 || cond2
