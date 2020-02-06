@@ -340,20 +340,20 @@ classdef Geometry < handle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              
         function obj = KnotRefine(obj,X,dir)
             
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 [obj.U, obj.Pw] = RefineKnotVectCurve(obj.nu,obj.pu,obj.U,obj.Pw,X,numel(X)-1);
                 obj.nu = obj.nu + numel(X);
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
             
-            elseif strcmp(obj.type,'surf') == 1
+            elseif strcmp(obj.type,'surf')
                 [obj.U, obj.V, obj.Pw] = RefineKnotVectSurface(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.Pw,X,numel(X)-1,dir);
                 obj.nu = size(obj.Pw,1)-1;
                 obj.nv = size(obj.Pw,2)-1;
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
                 
-            elseif strcmp(obj.type,'volume') == 1
+            elseif strcmp(obj.type,'volume')
                 
                 if dir == 1
                     [obj.U, obj.Pw] = RefineKnotSolid(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,obj.Pw,X,dir);
@@ -379,14 +379,14 @@ classdef Geometry < handle
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
         function obj = KnotRemove(obj,knot,num,dir)
             
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 r = FindSpanLinear(obj.nu,obj.pu,knot,obj.U);
                 s = Mult(obj.nu,obj.pu,knot,obj.U);
                 [~,obj.U,obj.Pw] = RemoveCurveKnot(obj.nu,obj.pu,obj.U,obj.Pw,knot,r,s,num);
                 obj.nu = size(obj.Pw,2)-1;
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
-            elseif strcmp(obj.type, 'surf') == 1
+            elseif strcmp(obj.type, 'surf')
                 
                 if dir == 1
                  r = FindSpanLinear(obj.nu,obj.pu,knot,obj.U);
@@ -402,7 +402,7 @@ classdef Geometry < handle
                 obj.nv = size(obj.Pw,2)-1;
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
-            elseif strcmp(obj.type,'volume') == 1
+            elseif strcmp(obj.type,'volume')
                 if dir == 1
                     [obj.U, obj.Pw] = RemoveKnotSolid(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,obj.Pw,knot,num,dir);
                     obj.nu = size(obj.Pw,1)-1;
@@ -427,12 +427,12 @@ classdef Geometry < handle
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
         function obj = DegreeElevate(obj,t,dir)
             
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 [obj.nu,obj.U,obj.Pw] = DegreeElevateCurve(obj.nu,obj.pu,obj.U,obj.Pw,t);
                 obj.pu = obj.pu + t;
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = obj.UpdateCPTS;
                 
-            elseif strcmp(obj.type,'surf') == 1
+            elseif strcmp(obj.type,'surf')
                 [obj.nu,obj.U,obj.nv,obj.V,obj.Pw] = DegreeElevateSurface(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.Pw,dir,t);
 				
 				if dir == 1
@@ -443,7 +443,7 @@ classdef Geometry < handle
 				
                 [obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
-            elseif strcmp(obj.type,'volume') == 1
+            elseif strcmp(obj.type,'volume')
                 
                 if dir == 1
                     [obj.nu, obj.U, obj.Pw] = DegreeElevateSolid(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,obj.Pw,dir,t);
@@ -462,9 +462,9 @@ classdef Geometry < handle
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
         function [INN, IEN, nel, nen] = get_connectivity(obj)
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu);
-            elseif strcmp(obj.type,'surf') == 1
+            elseif strcmp(obj.type,'surf')
                 [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv);
             else
                 [INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
@@ -535,17 +535,17 @@ classdef Geometry < handle
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           
         function [] = plot_basis(obj,dir)
             
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 PlotAllBasisFuns(obj.nu,obj.pu,obj.U);
                 
-            elseif strcmp(obj.type,'surf') == 1
+            elseif strcmp(obj.type,'surf')
                 if dir == 1
                     PlotAllBasisFuns(obj.nu,obj.pu,obj.U);
                 else
                     PlotAllBasisFuns(obj.nv,obj.pv,obj.V);
                 end
                 
-            elseif strcmp(obj.type,'volume') == 1
+            elseif strcmp(obj.type,'volume')
                 if dir == 1
                     PlotAllBasisFuns(obj.nu,obj.pu,obj.U);
                 elseif dir == 2
@@ -585,7 +585,7 @@ classdef Geometry < handle
 		
         function P = get_point_cell(obj)
            
-            if strcmp('volume',obj.type) == 1
+            if strcmp('volume',obj.type)
                P = cell(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
                
                nu = size(obj.Pw,1); nv = size(obj.Pw,2); nw = size(obj.Pw,3);
@@ -601,7 +601,7 @@ classdef Geometry < handle
                    end
                end
            
-            elseif strcmp('curve',obj.type) == 1
+            elseif strcmp('curve',obj.type)
                 P = cell(length(obj.Pw),1);
                 nu = length(obj.Pw);
                
@@ -612,7 +612,7 @@ classdef Geometry < handle
                     P{i}(4) = obj.weight(i);
                 end
            
-            elseif strcmp('surf',obj.type) == 1
+            elseif strcmp('surf',obj.type)
                 P = cell(size(obj.Pw,1),size(obj.Pw,2));
                 nu = size(obj.Pw,1); nv = size(obj.Pw,2);
                
