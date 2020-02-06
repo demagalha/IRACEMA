@@ -100,7 +100,7 @@ classdef Geometry < handle
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
         function [PX, PY, PZ, weight] = UpdateCPTS(obj)
             
-            if strcmp(obj.type,'curve') == 1
+            if strcmp(obj.type,'curve')
                 PX = zeros(1,size(obj.Pw,2));
                 PY = zeros(1,size(obj.Pw,2));
                 PZ = zeros(1,size(obj.Pw,2));
@@ -113,7 +113,7 @@ classdef Geometry < handle
                end
             
             
-            elseif strcmp(obj.type,'surf') == 1
+            elseif strcmp(obj.type,'surf')
                 PX = zeros(size(obj.Pw,1),size(obj.Pw,2));
                 PY = zeros(size(obj.Pw,1),size(obj.Pw,2));
                 PZ = zeros(size(obj.Pw,1),size(obj.Pw,2));
@@ -128,7 +128,7 @@ classdef Geometry < handle
                     end
                 end
                 
-            elseif strcmp(obj.type,'volume') == 1
+            elseif strcmp(obj.type,'volume')
                 PX = zeros(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
                 PY = zeros(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
                 PZ = zeros(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
@@ -158,7 +158,7 @@ classdef Geometry < handle
         end
 
     
-        if strcmp(obj.type,'curve') == 1
+        if strcmp(obj.type,'curve')
             nu = size(P,2)-1;
             PX = zeros(1,nu+1);
             PY = zeros(1,nu+1);
@@ -173,7 +173,7 @@ classdef Geometry < handle
                 weight(i) = P{i}(4);
             end
         
-        elseif strcmp(obj.type,'surf') == 1
+        elseif strcmp(obj.type,'surf')
             nu = size(P,1)-1;
             nv = size(P,2)-1;
             PX = zeros(nu+1,nv+1);
@@ -190,7 +190,7 @@ classdef Geometry < handle
                 end
             end
         
-        elseif strcmp(obj.type,'volume') == 1
+        elseif strcmp(obj.type,'volume')
             nu = size(P,1)-1;
             nv = size(P,2)-1;
             nw = size(P,3)-1;
