@@ -13,7 +13,6 @@ PPw.y = zeros(p+1,q+1);
 PPw.z = zeros(p+1,q+1);
 PPw.w = zeros(p+1,q+1);
 for k=0:p
-    
     for L=0:q
         PPw.x(k+1,L+1) = Pw(uspan-p+k+1,vspan-q+L+1).x;
         PPw.y(k+1,L+1) = Pw(uspan-p+k+1,vspan-q+L+1).y;

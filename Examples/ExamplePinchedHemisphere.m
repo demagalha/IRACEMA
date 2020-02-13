@@ -3,14 +3,22 @@ close all
 clc
 
 %% Pre-processing
-Model = BuildQuarterHemisphere(10,0.04);
 
+for inter = 1:17
+Model = BuildQuarterHemisphere(10,0.04);
+r = inter+1;
+interval = 0+1/r:1/r:1-1/r;
+% if inter >1
+Model.DegreeElevate(1,1);
+Model.DegreeElevate(1,2);
+% end
+Model.KnotRefine(interval,1);
+Model.KnotRefine(interval,2);
 % Refinement
-Model.DegreeElevate(3,1);
-Model.DegreeElevate(3,2);
-Model.DegreeElevate(4,3);
-Model.KnotRefine(0.5,1);
-Model.KnotRefine(0.5,2);
+
+Model.DegreeElevate(1,3);
+% Model.KnotRefine(0.5,1);
+% Model.KnotRefine(0.5,2);
 Model.KnotRefine(0.5,3);
 
 % Material Properties
@@ -45,14 +53,15 @@ for i=1:numel(P)
     elseif P{i}(1) == 0
         sym2Nod = [sym2Nod i];
     end
-    if (P{i}(1) == 0) && (P{i}(2) == 10.02)
+    if (P{i}(1) == 0) && (P{i}(2) == 10.02) && (P{i}(3) == 0)
         f1Nod = [f1Nod i];
     end
-    if (P{i}(1) == 10.02) && (P{i}(2) == 0)
+    if (P{i}(1) == 10.02) && (P{i}(2) == 0) && (P{i}(3) == 0)
         f2Nod = [f2Nod i];
     end
 end
-constraints = reshape(ID(:,constNod),numel(ID(:,constNod)),1);
+constraints = reshape(ID(2,constNod),numel(ID(2,constNod)),1);
+% constraints = [];
 symmetry1 = reshape(ID(2,sym1Nod),numel(ID(2,sym1Nod)),1);
 symmetry2 = reshape(ID(1,sym2Nod),numel(ID(1,sym2Nod)),1);
 bc = [constraints; symmetry1; symmetry2];
@@ -80,7 +89,10 @@ scaling_factor = 33;
 
 for i=1:size(ID,2)
     u{i} = scaling_factor*[full(d(ID(:,i)))' 0];
+    dd{i} = [full(d(ID(:,i)))' 0];
     comb{i} = B{i} +u{i};
 end
-DeformedModel = Geometry('volume',Model.pu,Model.U,Model.pv,Model.V,Model.pw,Model.W,comb);
-DeformedModel.plot_geo('coarse',0,1);
+% DeformedModel = Geometry('volume',Model.pu,Model.U,Model.pv,Model.V,Model.pw,Model.W,comb);
+% DeformedModel.plot_geo('coarse',0,1);
+conv(inter) = min(d(ID(2,:)))
+end

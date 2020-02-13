@@ -40,7 +40,7 @@ hold all
 grid on
 semilogx(p3(12,:),p3_conv(1,:),'LineWidth',3)
 semilogx(p4(12,:),p4_conv(1,:),'LineWidth',3)
-semilogx(p5(12,:),p5_conv(1,:),'LineWidth',3)
+% semilogx(p5(12,:),p5_conv(1,:),'LineWidth',3)
 legend('p=2','p=3','p=4','p=5')
 title('Frequency Factor vs Element Polynomial Order','FontWeight','bold','FontSize',23)
 ylabel('Frequency Factor Relative Error ','FontWeight','bold','FontSize',23)
@@ -193,15 +193,15 @@ set(gca,'FontSize',20,'FontWeight','bold')
 % set(gca,'FontSize',20,'FontWeight','bold')
 
 % figure(13)
-subplot(2,2,3)
-semilogx(p2(12,:),p2(11,:),'LineWidth',3)
-hold all
-grid on
-semilogx(p3(12,:),p3(11,:),'LineWidth',3)
-semilogx(p4(12,:),p4(11,:),'LineWidth',3)
-semilogx(p5(12,:),p5(11,:),'LineWidth',3)
-legend('p=2','p=3','p=4','p=5')
-title('Simulation Time vs Element Polynomial Order','FontWeight','bold','FontSize',23)
-ylabel('Time [s]','FontWeight','bold','FontSize',23)
-xlabel('Number of Elements','FontWeight','bold','FontSize',23)
-set(gca,'FontSize',20,'FontWeight','bold')
+% subplot(2,2,3)
+% semilogx(p2(12,:),p2(11,:),'LineWidth',3)
+% hold all
+% grid on
+% semilogx(p3(12,:),p3(11,:),'LineWidth',3)
+% semilogx(p4(12,:),p4(11,:),'LineWidth',3)
+% semilogx(p5(12,:),p5(11,:),'LineWidth',3)
+% legend('p=2','p=3','p=4','p=5')
+% title('Simulation Time vs Element Polynomial Order','FontWeight','bold','FontSize',23)
+% ylabel('Time [s]','FontWeight','bold','FontSize',23)
+% xlabel('Number of Elements','FontWeight','bold','FontSize',23)
+% set(gca,'FontSize',20,'FontWeight','bold')

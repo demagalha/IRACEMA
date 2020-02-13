@@ -148,48 +148,5 @@ function [R, dRdx, d2Rdx2, dudx, J, H] = CalculatePhysicalDerivatives(Model, Col
     dudx = dUdX(1,:);
     dvdx = dUdX(2,:);
     dwdx = dUdX(3,:);
-
-    % Now we have to calculate the second derivatives of the parameter space in
-    % regards to physical coordinates. Formulas are a bit more complicated than
-    % simply inverting dx/du for the second derivatives. Please see attached
-    % note for the derivation.
-
-    % Approximation: d2udx2 = dudx*dudx
-    H = zeros(3,3,3);
-    H(1,:,:) = dudx'*dudx;
-    H(2,:,:) = dvdx'*dvdx;
-    H(3,:,:) = dwdx'*dwdx; 
-    % Physical Derivatives
-    tmp11 = 0;
-    tmp12 = 0;
-    tmp13 = 0;
-    tmp22 = 0;
-    tmp23 = 0;
-    tmp33 = 0;
-    d2Rdx2 = zeros(3,3,3,length(R));
-    for idx=1:si*sj*sk
-        [i,j,kk] = ind2sub([si,sj,sk],idx);
-        for l=1:3
-            for k=1:3
-                tmp11 = tmp11+ d2R(k,l,idx)*dUdX(l,1)*dUdX(k,1) + dR(k,idx)*H(k,1,1);
-                tmp22 = tmp22+ d2R(k,l,idx)*dUdX(l,2)*dUdX(k,2) + dR(k,idx)*H(k,2,2);
-                tmp33 = tmp33+ d2R(k,l,idx)*dUdX(l,3)*dUdX(k,3) + dR(k,idx)*H(k,3,3);
-                tmp12 = tmp12+ d2R(k,l,idx)*dUdX(l,2)*dUdX(k,1) + dR(k,idx)*H(k,1,2);
-                tmp13 = tmp13+ d2R(k,l,idx)*dUdX(l,3)*dUdX(k,1) + dR(k,idx)*H(k,1,3);
-                tmp23 = tmp23+ d2R(k,l,idx)*dUdX(l,3)*dUdX(k,2) + dR(k,idx)*H(k,2,3);
-            end
-        end
-        for ii=1:3
-        d2Rdx2(ii,1,1,idx) = tmp11*P{i,j,kk}(ii)*P{i,j,kk}(4);
-        d2Rdx2(ii,2,2,idx) = tmp22*P{i,j,kk}(ii)*P{i,j,kk}(4);
-        d2Rdx2(ii,3,3,idx) = tmp33*P{i,j,kk}(ii)*P{i,j,kk}(4);
-        d2Rdx2(ii,1,2,idx) = tmp12*P{i,j,kk}(ii)*P{i,j,kk}(4);
-        d2Rdx2(ii,1,3,idx) = tmp13*P{i,j,kk}(ii)*P{i,j,kk}(4);
-        d2Rdx2(ii,2,3,idx) = tmp23*P{i,j,kk}(ii)*P{i,j,kk}(4);
-        end
-    end
-    d2Rdx2(:,3,2,:) = d2Rdx2(:,2,3,:);
-    d2Rdx2(:,3,1,:) = d2Rdx2(:,1,3,:);
-    d2Rdx2(:,2,1,:) = d2Rdx2(:,1,2,:);
 end
 

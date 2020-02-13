@@ -39,7 +39,7 @@ clc
 %     support_ctrl_pts = reshape(ID(3,supported_pts),numel(ID(3,supported_pts)),1);
     bc = [clamp_ctrl_pts]; % boundary conditions
     K = full(K); % Easier to manipulate in MATLAB than sparse
-    M = full(M);sky
+    M = full(M);
     for i=1:numel(bc)
         K(bc(i),bc(i)) = 1e30;
     end

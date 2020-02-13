@@ -57,6 +57,9 @@ for e=1:nel
     end
     K_e = zeros(N_ELE_DOF);
 %     F_e = zeros(2,nen);
+    B = cell(nel,N_QUAD_U,N_QUAD_V);
+    quad_span = B;
+    quad_J = B;
     for i=1:N_QUAD_U
         for j=1:N_QUAD_V
             [R, dR, J] = Shape2D(Model,u(i),v(j),e,P,IEN,INN);
@@ -103,7 +106,7 @@ end
 T = -10;
 
 sym1 = reshape(ID(2,sym1Nod),numel(ID(2,sym1Nod)),1);
-sym2 = reshape(ID(1,sym1Nod),numel(ID(1,sym1Nod)),1);
+sym2 = reshape(ID(1,sym2Nod),numel(ID(1,sym2Nod)),1);
 bc = [sym1; sym2];
 for i=1:numel(bc)
     K(bc(i),bc(i)) = 1e30;
@@ -126,106 +129,20 @@ d = K\F;
 
 B = Model.get_point_cell;
 u = cell(size(B));
-uu = u;
+dd = u;
 comb = u;
 scaling_factor = 33;
 
 for i=1:size(ID,2)
     u{i} = scaling_factor*[full(d(ID(:,i)))' 0 0];
-    uu{i} = [full(d(ID(:,i)))' 0 1];
+    dd{i} = [full(d(ID(:,i)))' 0 B{i}(4)];
     comb{i} = B{i} +u{i};
 end
 
 DeformedModel = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,comb);
 % DeformedModel.plot_geo('fine',0,1);
 
-u = 1;
-v = 1;
-U = Model.U;
-pu = Model.pu;
-V = Model.V;
-pv = Model.pv;
-
-su = FindSpanLinear(length(U)-pu-2,pu,u,U);
-sv = FindSpanLinear(length(V)-pv-2,pv,v,V);
-
-NU = DersBasisFun(su,u,pu,1,U);
-N = NU(1,:);
-dN = NU(2,:);
-[~, si] = size(NU);
-
-MV = DersBasisFun(sv,v,pv,1,V);
-M = MV(1,:);
-dM = MV(2,:);
-[~,sj] = size(MV);
-clear NU MV
-
-P = Model.get_point_cell;
-weight = Model.weight;
-P = P(su-pu+1:su+1,sv-pv+1:sv+1);
-weight = weight(su-pu+1:su+1,sv-pv+1:sv+1);
-Q = 0;
-dQdu = 0;
-dQdv = 0;
-dBdu = zeros(size(B));
-dBdv = dBdu;
-B = zeros(1,si*sj);
-for idx=1:si*sj
-    [i,j] = ind2sub([si,sj],idx);
-    B(idx) = N(i)*M(j);
-    dBdu(idx) = dN(i)*M(j);
-    dBdv(idx) = N(i)*dM(j);
-    Q = Q+B(idx)*weight(idx);
-    dQdu = dQdu+ dBdu(idx)*weight(idx);
-    dQdv = dQdv+ dBdv(idx)*weight(idx);
-end
-R = zeros(1,si*sj);
-dRdu = zeros(size(R));
-dRdv = zeros(size(R));
-for idx=1:si*sj
-    [i,j] = ind2sub([si,sj],idx);
-    R(idx) = B(idx)/Q;
-    dRdu(idx) = dN(i)*M(j) - (R(idx)/Q)*dQdu;
-    dRdv(idx) = N(i)*dM(j) - (R(idx)/Q)*dQdv;
-end
-
-dR = zeros(2,length(R));
-dRdx = dR;
-dR(1,:) = dRdu;
-dR(2,:) = dRdv;
-dxdu = zeros(2);
-for idx=1:si*sj
-    [i,j] = ind2sub([si,sj],idx);
-    for xx=1:2
-        for yy=1:2
-            dxdu(xx,yy) = dxdu(xx,yy) +P{i,j}(xx)*dR(yy,idx);
-        end
-    end
-end
-dudx = inv(dxdu);
-
-for idx=1:si*sj
-    for xx=1:2
-        for yy=1:2
-            dRdx(xx,idx) = dRdx(xx,idx) +dR(yy,idx)*dudx(yy,xx);
-        end
-    end
-end
-Jmod = det(dxdu);
-[sz1, sz2] = size(uu);
-uu = uu(su-pu+1:su+1,sv-pv+1:sv+1);
-xx = zeros(numel(uu),1);
-yy = xx;
-for i=1:numel(uu)
-    xx(i) = uu{i}(1)*uu{i}(4);
-    yy(i) = uu{i}(2)*uu{i}(4);
-end
-
-sx = dRdx(1,:)*xx(:);
-sy = dRdx(2,:)*yy(:);
-sxy = dRdx(1,:)*yy(:) + dRdx(2,:)*xx(:);
-
-sigma = C*[sx; sy; sxy]
+% Stress Calculations
 
 
-    
+

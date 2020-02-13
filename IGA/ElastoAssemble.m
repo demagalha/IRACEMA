@@ -52,20 +52,20 @@ function [K, F, IEN] = ElastoAssemble(Model,MatPropMatrix,f)
     W = Model.W;
     P = Model.get_point_cell;
     % Get Gauss-Legendre Quadrature Points
-    [u, wu] = getGP(pu);
-    [v, wv] = getGP(pv);
-    [w, ww] = getGP(pw);
-    N_QUAD_U = length(u);
-    N_QUAD_V = length(v);
-    N_QUAD_W = length(w);
+%     [u, wu] = getGP(pu);
+%     [v, wv] = getGP(pv);
+%     [w, ww] = getGP(pw);
+%     N_QUAD_U = length(u);
+%     N_QUAD_V = length(v);
+%     N_QUAD_W = length(w);
 
     % Alocate memory for Stiffness and Mass arrays
     N_DOF = numel(INN);
     K = zeros(N_DOF);
     F = zeros(N_DOF,1);
     N_ELE_DOF = nen*3;
-%     check1 = min(INN);
-%     check2 = max(INN);    
+    check1 = min(INN);
+    check2 = max(INN);    
     %% Assembly
     for e=1:nel % Loop Through Elements
         ni = INN(IEN(1,e),1);
@@ -77,19 +77,22 @@ function [K, F, IEN] = ElastoAssemble(Model,MatPropMatrix,f)
         end
         K_e = zeros(3*nen);
         F_e = zeros(3,nen);
-%         cond1 = (ni == check1(1) || nj == check1(2) || nk == check1(3));
-%         cond2 = (ni == check2(1) || nj == check2(2) || nk == check2(3));
-%         if cond1 || cond2
-%             % If on the boundary, use Gauss-Legendre Quadrature
-%             [u, wu] = getGP(pu);
-%             [v, wv] = getGP(pv);
-%             [w, ww] = getGP(pw);
-%         else
-% % %             % If on the interior, use Cauchy-Galerkin Points for Quadrature
-%             [u, wu] = getCG(pu);
-%             [v, wv] = getCG(pv);
-%             [w, ww] = getCG(pw);
-%         end
+        cond1 = (ni == check1(1) || nj == check1(2) || nk == check1(3));
+        cond2 = (ni == check2(1) || nj == check2(2) || nk == check2(3));
+        if cond1 || cond2
+            % If on the boundary, use Gauss-Legendre Quadrature
+            [u, wu] = getGP(pu);
+            [v, wv] = getGP(pv);
+            [w, ww] = getGP(pw);
+        else
+% %             % If on the interior, use Cauchy-Galerkin Points for Quadrature
+            [u, wu] = getCG(pu);
+            [v, wv] = getCG(pv);
+            [w, ww] = getCG(pw);
+        end
+         N_QUAD_U = length(u);
+         N_QUAD_V = length(v);
+         N_QUAD_W = length(w);
 
 %         F_e = zeros(3*nen,1); Currently disabled.
         for i=1:N_QUAD_U % Loop through U quadrature points

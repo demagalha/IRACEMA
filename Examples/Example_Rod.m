@@ -26,11 +26,13 @@ clc
 %% ISOGEOMETRIC ANALYSIS VIBRATION OF A ROD
 
 %% Load Data / Create Model
+strings = {'p2ref.mat','p3ref.mat','p4ref.mat','p5ref.mat'};
+for inter=1:4
 P = {[0 0 0 1],[1 0 0 1]}; % Control Points for 1D Rod
 Model = Geometry('curve',1,[0 0 1 1],P); % 1D Rod Constructor
 % Refinement Phase: First Degree Elevate, then h refine
-Model.DegreeElevate(1,1); % Quadratic Elements
-Model.KnotRefine([0.01:0.01:0.99],1); % Add 9 Knot Spans
+Model.DegreeElevate(inter,1); % Quadratic Elements
+Model.KnotRefine([0.001:0.001:0.99],1); % Add 9 Knot Spans
 P = Model.get_point_cell;
 U = Model.U;
 % Connectivity Arrays
@@ -119,5 +121,7 @@ end
 for i=1:numel(omega)
     fun_plot(i) = omega(i)/omega_t(i);
 end
-% clearvars -except coordinate fun_plot
-% save('rodp2.mat')
+clearvars -except coordinate fun_plot inter strings
+save(strings{inter});
+end
+
