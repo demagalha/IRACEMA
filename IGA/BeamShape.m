@@ -1,4 +1,4 @@
-function [R, d2R, Jmod] = BeamShape(Model,qu,element,P,IEN,INN)
+function [R, d2R, J] = BeamShape(Model,qu,element,P,IEN,INN)
 
 %% Setup
 pu = Model.pu;
@@ -15,7 +15,6 @@ dQdu = 0;
 d2Qdu2 = 0;
 weight = zeros(1,nen);
 dxdu = 0;
-dudx = 0;
 
 %% B-Spline Basis Functions
 NU = DersBasisFun(nu-1,u,pu,2,U);
@@ -46,8 +45,7 @@ for uu=0:pu
     ww = weight(location)/(Q*Q);
     R(location) = N(pu-uu+1)*ww*Q; % NURBS Basis
     dR(location,1) = (dN(pu-uu+1) - N(pu-uu+1)*dQdu)*ww;
-    d2R(location,1) = Q*d2N(pu-uu+1) -2*dN(pu-uu+1)*dQdu -N(pu-uu+1)*d2Qdu2 +(2/Q)*N(pu-uu+1)*dQdu*dQdu;
-    d2R(location,1) = d2R(location,1)*ww;
+    d2R(location,1) = (1/Q)*(weight(location)*d2N(pu-uu+1) -2*dR(location)*dQdu -R(location)*d2Qdu2);
 end
 
 %% Jacobian

@@ -19,7 +19,7 @@ E = 200*(10^9);
 a = sqrt((E*I)/(rho*A));
 
 %% k-refinement of the Model
-p = 2; % Number of p-refinements
+p = 3; % Number of p-refinements
 r = 1000; % Number of h-refinements
 interval = linspace(0,1,r+2);
 interval = interval(2:end-1);
@@ -61,7 +61,7 @@ for e=1:nel
     for i=1:NQUADU
         [R, d2R, J] = BeamShape(Model,u(i),e,P, IEN, INN);
         Jmod = abs(J*wu(i));
-        K_e = K_e + d2R'*E*I*d2R*Jmod;
+        K_e = K_e + d2R*E*I*d2R'*Jmod;
         M_e = R*rho*A*R'*Jmod;
     end
     % Assemblage
@@ -79,40 +79,48 @@ end
 %% Boundary Conditions
 
 constNod = [];
+
+P = Model.get_point_cell;
 for i=1:numel(P)
-    if P{i}(1) == 0 || P{i}(1) == L
+    if P{i}(1) == 0 || abs(P{i}(1) - L) <= sqrt(eps)
         constNod = [constNod i];
     end
 end
 bc = reshape(ID(1,constNod),numel(ID(1,constNod)),1);
-bc = sort(bc,'descend');
+bc = sort(unique(bc),'descend');
 for i=1:numel(bc)
-    if bc(i) < 3
-        K(:,bc(i):bc(i)+2) = [];
-        K(bc(i):bc(i)+2,:) = [];
-        M(:,bc(i):bc(i)+2) = [];
-        M(bc(i):bc(i)+2,:) = [];
+    if bc(i) == 1
+      K(bc(i):bc(i)+2,:) = [];
+      K(:,bc(i):bc(i)+2) = [];
+      M(bc(i):bc(i)+2,:) = [];
+      M(:,bc(i):bc(i)+2) = [];
     else
-        K(:,bc(i)-2:bc(i)) = [];
-        K(bc(i)-2:bc(i),:) = [];
-        M(:,bc(i)-2:bc(i)) = [];
-        M(bc(i)-2:bc(i),:) = [];
+      K(bc(i)-2:bc(i),:) = [];
+      K(:,bc(i)-2:bc(i)) = [];
+      M(bc(i)-2:bc(i),:) = [];
+      M(:,bc(i)-2:bc(i)) = [];
     end
 end
 
+%% Results
 K = sparse(K);
 M = sparse(M);
+[V,O] = eigs(K,M,length(K),'sm');
+omega = sqrt(diag(O))
 
-%% Results
+% Put back removed DOFs
+% bc = sort(
 
-[autovector,omega] = eigs(K,M,length(K),'sm');
-bc = sort(bc,'ascend');
-[sz1,sz2] = size(autovector);
-boundaries = zeros(1,sz2);
-bc_autos = zeros(sz1+numel(bc),sz2);
-for i=1:numel(bc)
-    autovector = [autovector(1:bc,:); boundaries; autovector(bc+1:end,:)];
-end
-omega = sqrt(diag(omega));
-[omega, idx] = sort(omega,'ascend');
-autovector = autovector(:,idx);
+% u = cell(size(P));
+% comb = u;
+% d = V(:,1);
+% 
+% for i=1:size(ID,2)
+%     u{i} = [0 0 d(ID(:,i)) 0];
+%     comb{i} = P{i} +u{i};
+% end
+
+% DeformedModel = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,comb);
+% DeformedModel.plot_geo('fine',0,0)
+% shading interp
+ww = @(n) a*(n*pi/L)^2;

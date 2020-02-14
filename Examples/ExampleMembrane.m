@@ -113,18 +113,18 @@ M = sparse(M);
 omega = sqrt(diag(O));
 
 % Put back removed DOFs
-bc = sort(
+% bc = sort(
 
-% u = cell(size(P));
-% comb = u;
-% d = V(:,1);
-% 
-% for i=1:size(ID,2)
-%     u{i} = [0 0 d(ID(:,i)) 0];
-%     comb{i} = P{i} +u{i};
-% end
+u = cell(size(P));
+comb = u;
+d = V(:,1);
 
-% DeformedModel = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,comb);
-% DeformedModel.plot_geo('fine',0,0)
+for i=1:size(ID,2)
+    u{i} = [0 0 d(ID(:,i)) 0];
+    comb{i} = P{i} +u{i};
+end
+
+DeformedModel = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,comb);
+DeformedModel.plot_geo('fine',0,0)
 ww = @(n,m) pi*sqrt((n/a)^2 +(m/b)^2);
 shading interp
