@@ -13,7 +13,7 @@ Examples - A folder of 1D, 2D and 3D example geometries.
 
 For more details on how to use each package, specially the Geometry class, please consult the Wiki.
 
-This package is maintained by Guilherme H. da Silva (dshguilherme@gmail.com) and André Demétrio Magalhães (demagalha@hotmail.com), from Laboratório de Vibrações e Acústica (LVA), Department of Mechanical Engineering of Universidade Federal de Santa Catarina (UFSC).
+This package is maintained by Guilherme H. da Silva (dshguilherme@gmail.com) and André Demetrio Magalhães (demagalha@hotmail.com), from Laboratório de Vibrações e Acústica (LVA), Department of Mechanical Engineering of Universidade Federal de Santa Catarina (UFSC).
 
 MIT License
  
