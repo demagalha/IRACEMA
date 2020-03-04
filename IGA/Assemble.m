@@ -103,15 +103,9 @@ function [K, M, IEN] = Assemble(Model,MatPropMatrix,RHO)
             end
         end
         % ASSEMBLY
-        idx = LM(:,e);
-        for i=1:N_ELE_DOF
-            ii = idx(i);
-            for j=1:N_ELE_DOF
-                jj = idx(j);
-                K(ii,jj) = K(ii,jj)+K_e(i,j);
-                M(ii,jj) = M(ii,jj)+M_e(i,j);
-            end
-        end
+        idx = LM(:,e)';
+        K(idx,idx) = K(idx,idx) + K_e;
+        M(idx,idx) = M(idx,idx) + M_e;
     end
     K = sparse(K);
     M = sparse(M);
