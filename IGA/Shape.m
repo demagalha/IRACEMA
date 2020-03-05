@@ -1,4 +1,4 @@
-function [R, varargout, Jacobian] = Shape(pu,u,U,P,MAX_ORDER_OF_DERIVATIVES)
+function [ddR, Jacobian] = Shape(pu,u,U,P,MAX_ORDER_OF_DERIVATIVES)
 %% INPUTS
 % pu - The spline's degree
 %  u - The point in [0,1] domain where the Shape funs are to be evaluated
@@ -35,14 +35,13 @@ J = norm(Jacobian);
 dW = Basis(2,:)*Weights; % Sum of dN*Weights
 dRdu = (1/(W^2))*(W*Basis(2,:) -dW*Basis(1,:));
 dR = dRdu/J;
-
+ddR = cell(MAX_ORDER_OF_DERIVATIVES,1);
+ddR{1} = R;
+ddR{2} = dR;
 if MAX_ORDER_OF_DERIVATIVES > 1
     WW = [];
-    ddR = cell(MAX_ORDER_OF_DERIVATIVES,1);
     WW(1) = W;
     WW(2) = dW;
-    ddR{1} = R;
-    ddR{2} = dR;
     count = 1;
     while count < MAX_ORDER_OF_DERIVATIVES
         count = count +1;
@@ -56,7 +55,6 @@ if MAX_ORDER_OF_DERIVATIVES > 1
         ddR{count+1} = (A - sum)/(W*J^count);
     end
 end
-
 end
                 
 
