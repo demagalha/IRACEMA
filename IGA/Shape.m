@@ -1,4 +1,4 @@
-function [ddR, J] = Shape(Model,u,MAX_ORDER_OF_DERIVATIVES)
+% function [ddR, J] = Shape(Model,u,MAX_ORDER_OF_DERIVATIVES)
 %% INPUTS
 % pu - The spline's degree
 %  u - The point in [0,1] domain where the Shape funs are to be evaluated
@@ -45,18 +45,41 @@ Weights = ACP(:,4); % Weights of the Active Control Points
 PP = ACP(:,1:3); 
 
 clear ACP
-for i=1:MAX_ORDER_OF_DERIVATIVES+1
-    access = length(u);
-    b = Basis{access}(i,:);
-    while access > 1
-        b = kron(Basis{access-1}(i,:),b); % Kronecker Product Rules! :D
-        access = access-1;
+access = 1;
+while access <= numel(p)
+    if access == 1
+        b = Basis{access}(1,:);
+    elseif access < 4
+        b = kron(Basis{access}(1,:),b); % Kronecker Product Rules! :D
+    else
+        continue
     end
-    B(i,:) = b;
+    access = access+1;
 end
+B(1,:) = b;
 W = B(1,:)*Weights; % Sum of Basis*Weights
-R = B(1,:)/W; % Rational Basis Funs
-x = B(1,:)*(PP.*Weights); % x y z coordinates
+R = B(1,:)'.*Weights/W; % Rational Basis Funs
+x = sum((R.*PP)); % x y z coordinates
+
+access = 1;
+C = {};
+for j=1:numel(p)
+    while access <= numel(p)
+        if access == 1
+            b = Basis{access}(access+1,:);
+        elseif access < 4
+            b = kron(Basis{access}(1,:),b);
+        else
+            continue
+        end
+        access = access+1;
+    end
+    C{j}(1,:) = b;
+    dW(j) = C{j}*Weights;
+    C{j} = C{j}' - R.*dW(j);
+    C{j} = C{j}.*Weights/W;
+end
+
 Jacobian = B(2,:)*(PP.*Weights);
 J = norm(Jacobian);
 dW = B(2,:)*Weights; % Sum of dN*Weights
@@ -65,24 +88,24 @@ dR = dRdu/J;
 ddR = cell(MAX_ORDER_OF_DERIVATIVES,1);
 ddR{1} = R;
 ddR{2} = dR;
-if MAX_ORDER_OF_DERIVATIVES > 1
-    WW = [];
-    WW(1) = W;
-    WW(2) = dW;
-    count = 1;
-    while count < MAX_ORDER_OF_DERIVATIVES
-        count = count +1;
-        A = Weights'.*B(count+1,:);
-        Wk = B(count+1,:)*Weights;
-        WW(count+1) = Wk;
-        soma = 0;
-        for j=1:count
-            soma = soma +nchoosek(count,j)*WW(j)*ddR{count-j+1};
-        end
-        ddR{count+1} = (A - soma)/(W*J^count);
-    end
-end
-end
+% if MAX_ORDER_OF_DERIVATIVES > 1
+%     WW = [];
+%     WW(1) = W;
+%     WW(2) = dW;
+%     count = 1;
+%     while count < MAX_ORDER_OF_DERIVATIVES
+%         count = count +1;
+%         A = Weights'.*B(count+1,:);
+%         Wk = B(count+1,:)*Weights;
+%         WW(count+1) = Wk;
+%         soma = 0;
+%         for j=1:count
+%             soma = soma +nchoosek(count,j)*WW(j)*ddR{count-j+1};
+%         end
+%         ddR{count+1} = (A - soma)/(W*J^count);
+%     end
+% end
+% end
                 
 
 
