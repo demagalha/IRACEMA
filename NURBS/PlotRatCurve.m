@@ -1,4 +1,4 @@
-function  [ ] = PlotRatCurve(n,p,U,Pw,CPTS,isolines,PlotStruct)
+function  [ ] = PlotRatCurve(n,p,U,Pw,Urange,CPTS,isolines,PlotStruct)
 
 
 if isolines
@@ -33,7 +33,7 @@ if isolines
 else
     
     
-    uu = linspace(U(1),U(end),1000);
+    uu = linspace(Urange(1),Urange(2),1000);
     C(1:numel(uu)) = CPOINT(0,0,0,0,1);
     
     for i=1:numel(uu)

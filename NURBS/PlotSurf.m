@@ -1,63 +1,62 @@
-function [] = PlotSurf(PX,PY,PZ,PW,nu,pu,U,nv,pv,V,render,RGB)
+function [] = PlotSurf(Model,render,Urange,Vrange)
 
-tam(1) = nu+1; tam(2) = nv+1;
-
-Pw(1:tam(1),1:tam(2)) = CPOINT(0,0,0,0,1);
-
-for i=1:tam(1)
-    for j=1:tam(2)
-        Pw(i,j) = CPOINT(PX(i,j),PY(i,j),PZ(i,j),PW(i,j),0);
-    end
+switch nargin
+    case 2
+        Urange = [Model.U(1) Model.U(end)];
+        Vrange = [Model.V(1) Model.V(end)];
+    case 3
+        Vrange = [Model.V(1) Model.V(end)];
+        if length(Urange) ~= 2
+            error('Urange format is not right, should be [Umin Umax]')
+        end
+    case 4
+        if length(Urange) ~= 2
+            error('Urange format is not right, should be [Umin Umax]');
+        end
+        if length(Vrange) ~= 2
+            error('Vrange format is not right, should be [Vmin Vmax]');
+        end
 end
 
-if strcmp(render,'coarse') == 1
-    
-uu = linspace(U(1),U(end),50);
-vv = linspace(V(1),V(end),50);
+switch render
+    case 'coarse'    
+        uu = linspace(Urange(1),Urange(2),50);
+        vv = linspace(Vrange(1),Vrange(2),50);
 
-elseif strcmp(render,'fine') == 1
-uu = linspace(U(1),U(end),200);
-vv = linspace(V(1),V(end),200);
-
-elseif strcmp(render,'medium') == 1
-uu = linspace(U(1),U(end),100);
-vv = linspace(V(1),V(end),100);
+    case 'fine'
+        uu = linspace(Urange(1),Urange(2),200);
+        vv = linspace(Vrange(1),Vrange(2),200);
+        
+    case 'medium'
+        uu = linspace(Urange(1),Urange(2),100);
+        vv = linspace(Vrange(1),Vrange(2),100);
 end
 
-uu = [uu unique(U)];
-uu = unique(sort(uu));
 
-vv = [vv unique(V)];
-vv = unique(sort(vv));
+if Urange(1) == Model.U(1) && Urange(2) == Model.U(end)
+    uu = [uu unique(Model.U)];
+    uu = unique(sort(uu));
+end
 
- for i = numel(uu):-1:1
-      for j = numel(vv):-1:1
-          S(i,j).x = 0;
-          S(i,j).y = 0;
-          S(i,j).z = 0;
-      end
- end
+if Vrange(1) == Model.V(1) && Vrange(2) == Model.V(end)
+    vv = [vv unique(Model.V)];
+    vv = unique(sort(vv));
+end
+
   
- for i=1:numel(uu)
-      for j=1:numel(vv)
-      S(i,j) = SurfacePointRAT3(nu,pu,U,nv,pv,V,Pw,uu(i),vv(j));
-      end
- end
-  
- SX = zeros(numel(uu),numel(vv));
- SY = zeros(numel(uu),numel(vv));
- SZ = zeros(numel(uu),numel(vv));
+SX = zeros(numel(uu),numel(vv));
+SY = zeros(numel(uu),numel(vv));
+SZ = zeros(numel(uu),numel(vv));
+
 for i=1:numel(uu)
     for j=1:numel(vv)
-        SX(i,j) = S(i,j).x;
-        SY(i,j) = S(i,j).y;
-        SZ(i,j) = S(i,j).z;
+        [SX(i,j),SY(i,j),SZ(i,j)] = SurfacePointRAT(Model,uu(i),vv(j));
     end
 end
 
 
 h = surf(SX,SY,SZ);
-set(h,'edgecolor','none','facecolor',RGB)
+set(h,'edgecolor','none','facecolor',Model.PlotProp.RGB,'FaceLighting','phong')
 
 
 end

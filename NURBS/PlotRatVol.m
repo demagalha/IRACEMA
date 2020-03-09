@@ -1,8 +1,25 @@
-function [] = PlotRatVol(PX,PY,PZ,w,nu,pu,U,nv,pv,V,nw,pw,W,render,cpoints,isolines,PlotStruct)
+function [] = PlotRatVol(Model,render,cpoints,isolines)
 
-Unique = unique(U);
-Vnique = unique(V);
-Wnique = unique(W);
+Unique = unique(Model.U);
+Vnique = unique(Model.V);
+Wnique = unique(Model.W);
+
+PX = Model.PX; PY = Model.PY; PZ = Model.PZ; w = Model.weight;
+nu = Model.nu; nv = Model.nv; nw = Model.nw;
+pu = Model.pu; pv = Model.pv; pw = Model.pw;
+U = Model.U; V = Model.V; W = Model.W;
+PlotStruct = Model.PlotProp;
+
+P = ExtractFaces(Model);
+F1 = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,P{1}.P);
+F6 = Geometry('surf',Model.pu,Model.U,Model.pv,Model.V,P{6}.P);
+
+F4 = Geometry('surf',Model.pw,Model.W,Model.pv,Model.V,P{4}.P);
+F3 = Geometry('surf',Model.pw,Model.W,Model.pv,Model.V,P{3}.P);
+
+F2 = Geometry('surf',Model.pu,Model.U,Model.pw,Model.W,P{2}.P);
+F5 = Geometry('surf',Model.pu,Model.U,Model.pw,Model.W,P{5}.P);
+
 %
  %%%%%%%%%%%%%%%%%%%% plotar as faces
  %%%%%%%%%%%%%%%%%%% face 1
@@ -21,7 +38,7 @@ FY(:,:) = PY(:,:,1);
 FZ(:,:) = PZ(:,:,1);
 FW(:,:) = w(:,:,1);
 
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,PlotStruct.RGB);
+PlotSurf(F1,render);
     hold on;
     
 if isolines
@@ -49,7 +66,7 @@ FY(:,:) = PY(:,:,end);
 FZ(:,:) = PZ(:,:,end);
 FW(:,:) = w(:,:,end);
 
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nv,pv,V,render,PlotStruct.RGB);
+PlotSurf(F6,render);
 
 if isolines
     for i=1:numel(Unique)
@@ -82,7 +99,7 @@ end
  FW = FW';
  
  
-PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,PlotStruct.RGB);
+PlotSurf(F4,render);
 
 if isolines
     
@@ -115,7 +132,7 @@ end
  FW(:,:) = w(end,:,:);
  FW = FW';
  
-PlotSurf(FX,FY,FZ,FW,nw,pw,W,nv,pv,V,render,PlotStruct.RGB);
+PlotSurf(F3,render);
 
 if isolines
     for i=1:numel(Wnique)
@@ -143,7 +160,7 @@ end
  FZ(:,:) = PZ(:,1,:);
  FW(:,:) = w(:,1,:);
  
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,PlotStruct.RGB);
+PlotSurf(F2,render);
 
 if isolines
     for i=1:numel(Unique)
@@ -171,7 +188,7 @@ end
  FZ(:,:) = PZ(:,end,:);
  FW(:,:) = w(:,end,:);
  
-PlotSurf(FX,FY,FZ,FW,nu,pu,U,nw,pw,W,render,PlotStruct.RGB);
+PlotSurf(F5,render);
 
 if isolines    
     for i=1:numel(Unique)

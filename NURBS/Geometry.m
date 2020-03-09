@@ -471,26 +471,57 @@ classdef Geometry < handle
             end
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function [] = plot_geo(obj,render,cpoints,isolines)
+        function [] = plot_geo(obj,render,cpoints,isolines,Urange,Vrange,Wrange)
             
+            nargin
             if strcmp(obj.type,'curve')
-                if nargin <= 3
-                    cpoints = 0;
-                    isolines = 0;
+                
+                switch nargin
+                    case 1
+                        render = 'medium';
+                        cpoints = 0;
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                    case 2
+                        cpoints = 0;
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                    case 3
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                    case 4
+                        Urange = [obj.U(1) obj.U(end)];
                 end
                 
-                PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,cpoints,isolines,obj.PlotProp);
+                PlotRatCurve(obj.nu,obj.pu,obj.U,obj.Pw,Urange,cpoints,isolines,obj.PlotProp);
                     
             
             elseif strcmp(obj.type,'surf')
                 
-                if (nargin <= 3)
-                    render = 'medium';
-                    cpoints = 0;
-                    isolines = 0;
-                    
+                switch nargin
+                    case 1
+                        render = 'medium';
+                        cpoints = 0;
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                    case 2
+                        cpoints = 0;
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                    case 3
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                    case 4
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                    case 5
+                        Vrange = [obj.V(1) obj.V(end)];
                 end
-                PlotSurf(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,render,obj.PlotProp.RGB);
+                        
+                PlotSurf(obj,render,Urange,Vrange);
                 hold on;
                 
                 if isolines
@@ -515,14 +546,42 @@ classdef Geometry < handle
                 
             elseif strcmp(obj.type,'volume')
                 
-                if (nargin == 1)
-                    render = 'medium';
-                    cpoints = 0;
-                    isolines = 0;
-                    
+                switch nargin
+                    case 1  
+                        render = 'medium';
+                        cpoints = 0;
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                        Wrange = [obj.W(1) obj.W(end)];
+                    case 2
+                        cpoints = 0;
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                        Wrange = [obj.W(1) obj.W(end)];
+                    case 3
+                        isolines = 0;
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                        Wrange = [obj.W(1) obj.W(end)];
+                    case 4
+                        Urange = [obj.U(1) obj.U(end)];
+                        Vrange = [obj.V(1) obj.V(end)];
+                        Wrange = [obj.W(1) obj.W(end)];
+                    case 5
+                        Vrange = [obj.V(1) obj.V(end)];
+                        Wrange = [obj.W(1) obj.W(end)];
+                    case 6
+                        Wrange = [obj.W(1) obj.W(end)];
                 end
-                PlotRatVol(obj.PX,obj.PY,obj.PZ,obj.weight,obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,render,cpoints,isolines,obj.PlotProp);
-
+                
+                if nargin > 4
+                    PlotRatVolRange(obj,Urange,Vrange,Wrange,render,cpoints,isolines)
+                else
+                    PlotRatVol(obj,render,cpoints,isolines);
+                end
+                
                 xlabel('x [m]','FontWeight','bold','FontSize',23)
                 ylabel('y [m]','FontWeight','bold','FontSize',23)
                 zlabel('z [m]','FontWeight','bold','FontSize',23)

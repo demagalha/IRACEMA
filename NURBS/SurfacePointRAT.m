@@ -3,10 +3,12 @@ function [Sx, Sy, Sz] = SurfacePointRAT(Model,u,v)
 n = Model.nu; p = Model.pu; U = Model.U;
 m = Model.nv; q = Model.pv; V = Model.V;
 
+%should change this later
 Pwx = Model.PX .* Model.weight;
 Pwy = Model.PY .* Model.weight;
 Pwz = Model.PZ .* Model.weight;
 Pww = Model.weight;
+%
 
 uspan = FindSpanLinear(n,p,u,U);
 Nu = BasisFuns(uspan,u,p,U);
