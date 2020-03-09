@@ -473,7 +473,6 @@ classdef Geometry < handle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function [] = plot_geo(obj,render,cpoints,isolines,Urange,Vrange,Wrange)
             
-            nargin
             if strcmp(obj.type,'curve')
                 
                 switch nargin
