@@ -91,7 +91,7 @@ classdef Geometry < handle
 					obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
 			
 				otherwise
-					disp('Invalid type')
+					disp('Type not recognized')
             end
 		end
                 
