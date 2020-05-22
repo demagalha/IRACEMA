@@ -452,7 +452,7 @@ classdef Geometry < handle
 					[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu);
 				case 'surf'
 					[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv);
-				case 'volume
+				case 'volume'
 					[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
 				otherwise
 					disp('Invalid type')
