@@ -125,8 +125,8 @@ classdef Geometry < handle
 							weight(i,j) = obj.Pw(i,j).w;
 						end
 					end
-					
-			case 'volume'
+
+				case 'volume'
 					PX = zeros(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
 					PY = zeros(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
 					PZ = zeros(size(obj.Pw,1),size(obj.Pw,2),size(obj.Pw,3));
