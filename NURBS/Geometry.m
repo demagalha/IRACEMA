@@ -219,7 +219,7 @@ classdef Geometry < handle
 						obj.U = obj.U/obj.U(end);
 					end
 					
-                case 'surf'
+				case 'surf'
 					if obj.U(1) < 0
 						obj.U = obj.U - obj.U(1);
 					elseif obj.U(1) > 0
@@ -320,7 +320,7 @@ classdef Geometry < handle
 					obj.PlotProp = struct('RGB',[0 0 1],'LineSize',2,'ControlRGB',[0 0 0],'IsoRGB',[],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
 				case 'surf'
                 	obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
-            	case 'volume'
+				case 'volume'
                 	obj.PlotProp = struct('RGB',[.1 .9 .1],'LineSize',2,'ControlRGB',[1 0 0],'IsoRGB',[0 0 0],'MarkerCPT','o','MarkerCPTRGB',[1 0 0]);
 				otherwise
                 	disp('Type not recognized');
@@ -338,7 +338,7 @@ classdef Geometry < handle
 					obj.nu = obj.nu + numel(X);
 					[obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
 
-            	case 'surf'
+				case 'surf'
 					[obj.U, obj.V, obj.Pw] = RefineKnotVectSurface(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.Pw,X,numel(X)-1,dir);
 					obj.nu = size(obj.Pw,1)-1;
 					obj.nv = size(obj.Pw,2)-1;
@@ -375,7 +375,7 @@ classdef Geometry < handle
 					obj.nu = size(obj.Pw,2)-1;
 					[obj.PX, obj.PY, obj.PZ, obj.weight] = UpdateCPTS(obj);
                 
-            	case 'surf'
+				case 'surf'
 					if dir == 1
 						r = FindSpanLinear(obj.nu,obj.pu,knot,obj.U);
 						s = Mult(obj.nu,obj.pu,knot,obj.U);
@@ -449,11 +449,11 @@ classdef Geometry < handle
         function [INN, IEN, nel, nen] = get_connectivity(obj)
 			switch obj.type
 				case 'curve'
-                	[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu);
-            	case 'surf'
-                	[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv);
-            	case 'volume
-                	[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
+					[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu);
+				case 'surf'
+					[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv);
+				case 'volume
+					[INN, IEN, nel, nen] = GetConnectivity(obj.nu,obj.pu,obj.nv,obj.pv,obj.nw,obj.pw);
 				otherwise
 					disp('Invalid type')
             end
@@ -595,7 +595,7 @@ classdef Geometry < handle
 							disp('Invalid direction')
 					end
                 
-            	case 'volume'
+				case 'volume'
 					switch dir
 						case 1
 							PlotAllBasisFuns(obj.nu,obj.pu,obj.U);
