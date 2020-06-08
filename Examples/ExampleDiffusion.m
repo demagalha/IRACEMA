@@ -21,11 +21,11 @@ Model = geo_ruled(c1,c2); % A ruled surface from curve 1 to curve 2
 clearvars -except Model pu U
 
 %% Refinement
-p = 5; % Number of p refinements
+p = 1; % Number of p refinements
     Model.DegreeElevate(p,1); % Elevate the degree of direction 1 p times
     Model.DegreeElevate(p,2); % Elevate the degree of direction 2 p times
 
-h = 10; %Number of h refinements in each parametric direction
+h = 20; %Number of h refinements in each parametric direction
     interval = linspace(0,1,h+2);
     interval = interval(2:end-1);
     
@@ -59,23 +59,36 @@ DirichletStrong = true;
 DirichletBoundaryArray = Gamma1;
 
 % Insulated at x = 0m -> Neumann Condition
-Gamma2 = GetBoundaryElements(Model,1,0,0);
-% Convecting at 750W/m with Ta = 273.15 at x = 0.6m & at y = 1m -> Neumann
-Gamma3 = GetBoundaryElements(Model,1,1,-750);
-Gamma4 = GetBoundaryElements(Model,2,1,-750);
+Gamma2 = GetBoundaryElements(Model,1,0,[0, 0]);
 NeumannEnforcement = true;
-NeumannBoundaryElements = [Gamma2; Gamma3; Gamma4];
+NeumannBoundaryElements = Gamma2;
+
+% Convecting at 750W/m with Ta = 273.15 at x = 0.6m & at y = 1m -> Robin
+% From Convection BC: -k dTdt = h(T_inf - T)
+% So robin = -hT_inf/k
+% BETA = -h/k
+h = -750;
+T_inf = 273.15; % Kelvin
+robin = -h*T_inf/alpha;
+BETA = -h/alpha;
+Gamma3 = GetBoundaryElements(Model,1,1,[robin,BETA]);
+Gamma4 = GetBoundaryElements(Model,2,1,[robin,BETA]);
+
+RobinEnforcement = true;
+RobinBoundaryElements = [Gamma3; Gamma4];
 
 % OBS: We use
 % GetBoundaryConditionArray(Model,direction,boundary_value,lift) for strong
 % imposition of BCs and
 % GetBoundaryElements(Model,direction,boundary_value,lift) for weak
 % imposition of BCs.
-
+if RobinEnforcement
+    [K, F] = RobinBC(Model,K,F,RobinBoundaryElements);
+end
 
 % Neumann Enforcement of Boundary Conditions
 if NeumannEnforcement
-    F = NeumannBoundaryCondition(Model,F,NeumannBoundaryElements);
+   [~, F] = RobinBC(Model,K,F,NeumannBoundaryElements);
 end
 % Enforcement of Robin Boundary Condition
 
@@ -96,3 +109,5 @@ end
 
 %% Plot
 PlotDisplacement(d,ID,Model);
+MM = VisualizeModes(Model,d,ID);
+Convergence = MM{1}.eval_point(1,0.2)

@@ -1,4 +1,4 @@
-function F = NeumannBoundaryCondition(Model,F,BoundaryElements)
+function [K,F] =  RobinBoundaryCondition(Model,K,F,BoundaryElements)
 [INN, IEN, nel, nen] = Model.get_connectivity;
 ID = reshape(1:max(max(IEN)),1,max(max(IEN)));
 LM = zeros(nen,nel);
@@ -39,7 +39,8 @@ for ee=1:length(BoundaryElements)
             continue
         end
     bound_val = BoundaryElements(ee,3);
-    lift = BoundaryElements(ee,4);
+    robin = BoundaryElements(ee,4);
+    BETA = BoundaryElements(ee,5);
     F_e = zeros(N_ELE_DOF,1);
     K_e = zeros(N_ELE_DOF);
     for i=1:N_QUAD(direction)        
@@ -51,12 +52,11 @@ for ee=1:length(BoundaryElements)
             qv = q(i);
         end
         [R, ~, J] = Shape2D(Model,qu,qv,e,P,IEN,INN);
-        F_e = F_e + abs(J*w(i))*R*lift;
+        F_e = F_e + abs(J*w(i))*R*robin;
+        K_e = K_e +abs(J*w(i))*R*BETA*R';
     end
     idx = LM(:,e)';
     F(idx) = F(idx)+ F_e;
+    K(idx,idx) = K(idx,idx) + K_e;
 end
-            
-        
-    
 end

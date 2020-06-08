@@ -5,9 +5,11 @@
 
 %% INPUTS
 % Model - Geometry class object
-% lift_u - pair of values, corresponding to the lift at u = 0 and u = 1
-% lift_v - pair of values, as above.
-
+% lift - pair of values, corresponding to the lift at u = 0 and u = 1
+% direction - Parametric direction of the boundary
+% boundary - 0 or 1, tells if its the initial (0) or final (1) boundary
+% lift - The lift value. constant double for Neumann, 1x2 double for Robin
+% OBS: for Robin, use [r, BETA] format. r -> Force, BETA -> Stiffness
 %% OUTPUTS
 % BoundaryElements - n-by-4 matrix. Rows are elements of the boundary
 % columns are:
@@ -15,7 +17,7 @@
 % (:,2) - Parametric Direction of the Boundary (1 for u, 2 for v)
 % (:,3) - Value of the boundary. 0 for the u/v = 0 boundary, 1 for u/v = 1
 % (:,4) - Lift value for the element, determined by lift_u and lift_v
-
+% (:,5) - Stiffness changing term for Robin boundary condition
 function BoundaryElements = GetBoundaryElements(Model,direction,boundary,lift)
 [INN, IEN, ~, ~] = Model.get_connectivity;
 

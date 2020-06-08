@@ -1,10 +1,10 @@
-function F = NeumannBoundaryCondition(Model,F,BoundaryElements)
+function [K,F] = ApplyBC(Model,K,F,BoundaryElements)
 [INN, IEN, nel, nen] = Model.get_connectivity;
 ID = reshape(1:max(max(IEN)),1,max(max(IEN)));
-LM = zeros(nen,nel);
-    for i=1:nel
-        LM(:,i) = reshape(ID(:,IEN(:,i)),nen,1);
-    end
+% LM = zeros(nen,nel);
+%     for i=1:nel
+%         LM(:,i) = reshape(ID(:,IEN(:,i)),nen,1);
+%     end
 pu = Model.pu;
 pv = Model.pv;
 p = [pu; pv];
@@ -30,33 +30,40 @@ for ee=1:length(BoundaryElements)
         q = quadpoints{direction,1};
         w = quadpoints{direction,2};
         Domain = Knots{direction};
+        DDomain = Knots{parametric_direction};
         pD = p(direction);
         order = p(direction);
         n = ni(direction);
+        nn = ni(parametric_direction);
         h = Domain(n+1) - Domain(n); % Element size-scale
+        hh = DDomain(nn+1) - Domain(nn);
         % Check if element has zero measure
         if h < sqrt(eps) % if element has zero measure
             continue
         end
     bound_val = BoundaryElements(ee,3);
-    lift = BoundaryElements(ee,4);
-    F_e = zeros(N_ELE_DOF,1);
-    K_e = zeros(N_ELE_DOF);
-    for i=1:N_QUAD(direction)        
-        if direction == 1
-            qu = q(i);
-            qv =(BoundaryElements(ee,3)*2 -1);
-        elseif direction == 2
-            qu = (BoundaryElements(ee,3)*2 -1);
-            qv = q(i);
-        end
-        [R, ~, J] = Shape2D(Model,qu,qv,e,P,IEN,INN);
-        F_e = F_e + abs(J*w(i))*R*lift;
+    robin = BoundaryElements(ee,4);
+    if size(BoundaryElements,2) > 4 % Check if it is a Robin BC
+        BETA = BoundaryElements(ee,5);
+    else
+        BETA = 0;
     end
-    idx = LM(:,e)';
+    F_e = zeros(pD+1,1);
+    K_e = zeros(pD+1);
+    for i=1:N_QUAD(direction)        
+            qu = q(i);
+        [R, ~, J] = Shape1D(Model,qu,e,P,IEN,INN);
+        F_e = F_e + abs(J)*w(i)*R/h/hh*robin;
+        K_e = K_e +abs(J)*w(i)*R*BETA/h/hh*R';
+    end
+    a = INN(IEN(:,e),parametric_direction);
+    if bound_val == 1
+        b = find(a == max(INN(:,parametric_direction)));
+    elseif bound_val == 0
+        b = find(a == 1);
+    end
+    idx = reshape(ID(:,IEN(b,e)),pD+1,1);
     F(idx) = F(idx)+ F_e;
+    K(idx,idx) = K(idx,idx) + K_e;
 end
-            
-        
-    
 end
