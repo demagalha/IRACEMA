@@ -36,8 +36,8 @@ pi = p(pidx);
 nb = n(bidx);
 pb = p(bidx);
 
-BoundaryPointIndexes = nb+1:-1:nb-pb+1;
-IntegrationPointIndexes = ni+1:-1:ni-pi+1;
+BoundaryPointIndexes = nb:-1:nb-pb;
+IntegrationPointIndexes = ni:-1:ni-pi;
 if bidx == 1
     PointInterval = {BoundaryPointIndexes;IntegrationPointIndexes};
 elseif bidx == 2
@@ -46,7 +46,7 @@ else
     error('Invalid Boundary. This function is exclusive to 2D problems.');
 end
 P = Model.get_point_cell;
-ActivePoints = cell((pi+1)*(pb+1),1);
+ActivePoints = cell(length(BoundaryPointIndexes)*length(IntegrationPointIndexes),1);
 for i = 1:numel(PointInterval{1})
     for j =1:numel(PointInterval{2})
         idx = sub2ind([numel(PointInterval{1}),numel(PointInterval{2})],i,j);
@@ -54,7 +54,9 @@ for i = 1:numel(PointInterval{1})
     end
 end
 ActivePoints = cell2mat(ActivePoints);
-
+ActivePoints = flipud(ActivePoints);
+points = ActivePoints(:,1:3);
+weights = ActivePoints(:,4);
 
 
 %% Shape Function Calculation
@@ -63,9 +65,24 @@ ui = ((IKnot(ni+1) - IKnot(ni))*q +(IKnot(ni+1) + IKnot(ni)))*0.5;
 ub = bval;
 
 NI = DersBasisFun(ni-1,ui,pi,1,IKnot);
-NB = zeros(pb+1,2);
-if bval == 0
-    NB(1,1) = 1;
-    NB(2,1) = pb/(BKnot(pb+2)-BKnot(1));
+NB = DersBasisFun(nb-1,ub,pb,1,BKnot);
+if bidx == 2
+    Basis = kron(NB(1,:),NI(1,:));
+    DerBasis = kron(NB(1,:),NI(2,:));
+elseif bidx == 1
+    Basis = kron(NI(1,:),NB(1,:));
+    DerBasis = kron(NI(2,:),NB(1,:));
+end
 
+Basis = flip(Basis');
+DerBasis = flip(DerBasis');
+
+Q = Basis'*weights;
+dQ = DerBasis'*weights;
+dRdu = weights.*(DerBasis - Basis*dQ)/(Q*Q);
+R = weights.*Basis*Q;
+J = dRdu'*points;
+J = norm(J);
+qJ = (IKnot(ni+1)-IKnot(ni))/2;
+dR = qJ*dRdu/J;
 end

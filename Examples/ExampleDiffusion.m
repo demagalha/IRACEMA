@@ -21,11 +21,11 @@ Model = geo_ruled(c1,c2); % A ruled surface from curve 1 to curve 2
 clearvars -except Model pu U
 
 %% Refinement
-p = 1; % Number of p refinements
+p = 2; % Number of p refinements
     Model.DegreeElevate(p,1); % Elevate the degree of direction 1 p times
     Model.DegreeElevate(p,2); % Elevate the degree of direction 2 p times
 
-h = 20; %Number of h refinements in each parametric direction
+h = 25; %Number of h refinements in each parametric direction
     interval = linspace(0,1,h+2);
     interval = interval(2:end-1);
     
@@ -110,4 +110,7 @@ end
 %% Plot
 PlotDisplacement(d,ID,Model);
 MM = VisualizeModes(Model,d,ID);
-Convergence = MM{1}.eval_point(1,0.2)
+Convergence = MM{1}.eval_point(1,0.2);
+str = 'Temperature at x = 0.6m, y = 0.2m:';
+str2 = num2str(Convergence.z - 273.15,'%.2f');
+display(strcat({str},{' '},{str2},{'C'}));

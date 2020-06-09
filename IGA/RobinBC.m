@@ -1,10 +1,10 @@
 function [K,F] = ApplyBC(Model,K,F,BoundaryElements)
 [INN, IEN, nel, nen] = Model.get_connectivity;
 ID = reshape(1:max(max(IEN)),1,max(max(IEN)));
-% LM = zeros(nen,nel);
-%     for i=1:nel
-%         LM(:,i) = reshape(ID(:,IEN(:,i)),nen,1);
-%     end
+LM = zeros(nen,nel);
+    for i=1:nel
+        LM(:,i) = reshape(ID(:,IEN(:,i)),nen,1);
+    end
 pu = Model.pu;
 pv = Model.pv;
 p = [pu; pv];
@@ -35,8 +35,6 @@ for ee=1:length(BoundaryElements)
         order = p(direction);
         n = ni(direction);
         nn = ni(parametric_direction);
-        h = Domain(n+1) - Domain(n); % Element size-scale
-        hh = DDomain(nn+1) - Domain(nn);
         % Check if element has zero measure
         if h < sqrt(eps) % if element has zero measure
             continue
@@ -48,21 +46,22 @@ for ee=1:length(BoundaryElements)
     else
         BETA = 0;
     end
-    F_e = zeros(pD+1,1);
-    K_e = zeros(pD+1);
+    F_e = zeros(prod(p+1),1);
+    K_e = zeros(prod(p+1));
     for i=1:N_QUAD(direction)        
             qu = q(i);
-        [R, ~, J] = Shape1D(Model,qu,e,P,IEN,INN);
-        F_e = F_e + abs(J)*w(i)*R/h/hh*robin;
-        K_e = K_e +abs(J)*w(i)*R*BETA/h/hh*R';
+        BoundaryData = [parametric_direction, direction, bound_val];
+        [R, ~, J] = BoundaryShape(Model,qu,e,IEN,INN,BoundaryData);
+        F_e = F_e + abs(J)*w(i)*R*robin;
+        K_e = K_e +abs(J)*w(i)*R*BETA*R';
     end
-    a = INN(IEN(:,e),parametric_direction);
-    if bound_val == 1
-        b = find(a == max(INN(:,parametric_direction)));
-    elseif bound_val == 0
-        b = find(a == 1);
-    end
-    idx = reshape(ID(:,IEN(b,e)),pD+1,1);
+%     a = INN(IEN(:,e),parametric_direction);
+%     if bound_val == 1
+%         b = find(a == max(INN(:,parametric_direction)));
+%     elseif bound_val == 0
+%         b = find(a == 1);
+%     end
+    idx = LM(:,e)';
     F(idx) = F(idx)+ F_e;
     K(idx,idx) = K(idx,idx) + K_e;
 end
