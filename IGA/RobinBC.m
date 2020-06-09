@@ -35,6 +35,7 @@ for ee=1:length(BoundaryElements)
         order = p(direction);
         n = ni(direction);
         nn = ni(parametric_direction);
+        h = Domain(n+1) - Domain(n); % Element size-scale
         % Check if element has zero measure
         if h < sqrt(eps) % if element has zero measure
             continue
