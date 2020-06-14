@@ -622,6 +622,21 @@ classdef Geometry < handle
                 	point = VolumePoint(obj.nu,obj.pu,obj.U,obj.nv,obj.pv,obj.V,obj.nw,obj.pw,obj.W,obj.Pw,knot,knot2,knot3);
 			end
         end
+		
+		function dR = eval_derivative(obj,u,v,P)
+		
+			switch obj.type
+				case 'curve'
+					disp('yet to be implemented')
+				case 'surf'
+					dR = CalculateDers2D(obj,u,v,P);
+				case 'volume'
+					disp('yet to be implemented')
+				otherwise
+					disp('Invalid type')
+			end
+		end
+					
 
         function Nip = eval_basis(obj,dir,i,knot)
 				switch dir
