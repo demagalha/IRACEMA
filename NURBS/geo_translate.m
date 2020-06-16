@@ -5,12 +5,12 @@ tam = size(P);
 vec = [vector 0];
 switch Model.type
 	case 'curve'
-		for i=1:Model.nu+1
+		for i=1:length(P)
 			P{i} = P{i} + vec;
-			translate = Geometry('curve',Model.pu,Model.U,P);
 		end
+		translate = Geometry('curve',Model.pu,Model.U,P);
 	case 'surf'
-		for i=:tam(1)
+		for i=1:tam(1)
 			for j=1:tam(2)
 				P{i,j} = P{i,j} + vec;
 			end
