@@ -2,12 +2,16 @@ function translate = geo_translate(Model,vector)
 
 P = Model.get_point_cell;
 tam = size(P);
-vec = [vector 0];
+if isrow(P{1})
+	vec = [vector 0];
+else
+	vec = [vector';0];
+end
+	
 switch Model.type
 	case 'curve'
 		for i=1:length(P)
-            newP = cell2mat(P(i)) +vec;
-			P{i} = newP;
+            P{i} = P{i} + vec;
 		end
 		translate = Geometry('curve',Model.pu,Model.U,P);
 	case 'surf'
