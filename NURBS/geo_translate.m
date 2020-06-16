@@ -6,7 +6,8 @@ vec = [vector 0];
 switch Model.type
 	case 'curve'
 		for i=1:length(P)
-			P{i} = P{i} + vec;
+            newP = cell2mat(P(i)) +vec;
+			P{i} = newP;
 		end
 		translate = Geometry('curve',Model.pu,Model.U,P);
 	case 'surf'
