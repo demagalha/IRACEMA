@@ -113,4 +113,5 @@ MM = VisualizeModes(Model,d,ID);
 Convergence = MM{1}.eval_point(1,0.2);
 str = 'Temperature at x = 0.6m, y = 0.2m:';
 str2 = num2str(Convergence.z - 273.15,'%.2f');
-display(strcat({str},{' '},{str2},{'C'}));
+a = strcat({str},{' '},{str2},{'C'});
+display(a{1});

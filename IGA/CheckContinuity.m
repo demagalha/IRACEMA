@@ -43,14 +43,24 @@ P = Omega1.get_point_cell;
 N_QUAD_U = length(u);
 N_QUAD_V = length(v);
 N_ELE_DOF = nen;
-elements = BoundaryData(1,:);
+% Find the elements of the Boundary
+elements = [];
+for i=1:size(IEN,2)
+    a = intersect(IEN(:,i),Boundary);
+    if isempty(a)
+        continue
+    else
+        elements = [elements; i];
+    end
+end
+
 r = 1;
 array_size = N_QUAD_U*N_QUAD_V*numel(elements);
-DerivativeData = zeros(array_size,8);
+DerivativeData = zeros(array_size,6);
 for ee=1:numel(elements)
     e = elements(ee);
-    ni = INN(IEN(1,e),1);
-    nj = INN(INN(1,e),2);
+    nu = INN(IEN(1,e),1);
+    nv = INN(IEN(1,e),2);
     count = 1;
     for i=1:N_QUAD_U
         for j=1:N_QUAD_V
@@ -82,7 +92,7 @@ for ee=1:numel(elements)
         dy = (O2_h.y - O2_coordinates.y);
         O2_dzdx = dz/dx;
         O2_dzdy = dz/dy;
-        DerivativeData(r,:) = [e,count,uu,u2,vv,v2,O1_dzdx,O2_dzdx,O1_dzdy,O2_dzdy];
+        DerivativeData(r,:) = [x,y,O1_dzdx,O1_dzdy,O2_dzdx,O2_dzdy];
         count = count+1;
         r = r+1;
         end

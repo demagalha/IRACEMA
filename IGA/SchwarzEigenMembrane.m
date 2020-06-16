@@ -200,7 +200,8 @@ aa = BoundariesPostProcess(aa,TheGamma);
 Omega1_Modes = VisualizeModes(Omega1,av1,ID1);
 Omega2_Modes = VisualizeModes(Omega2,av2,ID2);
 TheOmega_Modes = VisualizeModes(TheOmega,aa,IDD);
-
+K1 = K_one;
+K2 = K_two;
 %% First Graphs
 str1 = '\omega_1 = ';
 str2 = '\omega_2 = ';
@@ -231,12 +232,13 @@ max_iter = 6;
 str3 = ', Iteration #';
 while iter < max_iter
 %% First Step
-[K1,M1] = LuiBoundaryCondition(K_one,M_one,Gamma12,'u',1,Omega1_Modes{1},Omega2_Modes{1},InverseFunTwo);
-% K_one = K1; M_one = M1;
+LuiBoundary = GetBoundaryElements(Omega1,2,1,[0,0]);
+K1 = LuiBoundaryCondition(Omega1_Modes{1},Omega2_Modes{1},K_one,LuiBoundary,InverseFunTwo,'finite');
+K_one = K1;
 K1(Gamma1,:) = [];
 K1(:,Gamma1) = [];
-M1(Gamma1,:) = [];
-M1(:,Gamma1) = [];
+% M1(Gamma1,:) = [];
+% M1(:,Gamma1) = [];
 K1 = sparse(K1);
 M1 = sparse(M1);
 [av1,O1] = eigs(K1,M1,1,'sm');
@@ -270,11 +272,11 @@ if iter > max_iter - prod(graphs)
 end
 %% Second Step
 [K2, M2] = LuiBoundaryCondition(K_two,M_two,Gamma21,'u',0,Omega2_Modes{1},Omega1_Modes{1},InverseFunOne);
-% K_two = K2; M_two = M2;
+K_two = K2;
 K2(Gamma2,:) = [];
 K2(:,Gamma2) = [];
-M2(Gamma2,:) = [];
-M2(:,Gamma2) = [];
+% M2(Gamma2,:) = [];
+% M2(:,Gamma2) = [];
 K2 = sparse(K2);
 M2 = sparse(M2);
 [av2,O2] = eigs(K2,M2,1,'sm');
@@ -305,5 +307,16 @@ if iter > max_iter - prod(graphs)
     ylabel('y [m]','FontWeight','bold')
     zlabel('z [m]','FontWeight','bold')
     alpha(0.9)
+end
+% Plot Continuity
+DerivativeData1 = CheckContinuity(Omega2_Modes{1},Omega1_Modes{1},Gamma21,InverseFunOne);
+DerivativeData2 = CheckContinuity(Omega1_Modes{1},Omega2_Modes{1},Gamma12,InverseFunTwo);
+tmp = {DerivativeData1, DerivativeData2};
+figure(3)
+hold all
+for i=1:2
+    DerivativeData = tmp{i};
+quiver(DerivativeData(:,1),DerivativeData(:,2),DerivativeData(:,3),DerivativeData(:,4))
+quiver(DerivativeData(:,1),DerivativeData(:,2),DerivativeData(:,5),DerivativeData(:,6))
 end
 end
