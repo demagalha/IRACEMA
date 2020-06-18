@@ -1,6 +1,5 @@
 function BoundaryConditionArray = GetBoundaryConditionArray(Model,direction,boundary,lift)
 [INN, IEN, ~, ~] = Model.get_connectivity;
-ID = reshape(1:max(max(IEN)),1,max(max(IEN)));
 if boundary == 0
     u = find(INN(:,direction) == 1);
 elseif boundary == 1
