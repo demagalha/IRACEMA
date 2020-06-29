@@ -1,5 +1,5 @@
 function autovector = BoundariesPostProcess(autovector,boundaries)
-
+boundaries = sort(boundaries,'ascend');
 [sz1,sz2] = size(autovector);
 ndof = sz1+numel(boundaries);
 
