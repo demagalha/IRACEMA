@@ -11,6 +11,9 @@ pv1 = SubDomain1.pv;
 U1 = SubDomain1.U;
 V1 = SubDomain1.V;
 
+U2 = SubDomain2.U;
+V2 = SubDomain2.V;
+
 Knots1 = {U1, V1};
 p1 = [pu1, pv1];
 
@@ -26,8 +29,8 @@ elements = BoundaryElementData;
 for ee=1:numel(elements)
     e = elements(ee);
     ni = INN(IEN(1,e),:);
-    BOUNDARY_DIRECTION = BoundaryData(ee,2); % Boundary Direction
-    QUAD_DIRECTION = setdiff([1,2],parametric_direction); % Integration Direction
+    BOUNDARY_DIRECTION = BoundaryData(ee,2);
+    QUAD_DIRECTION = setdiff([1,2],parametric_direction);
     q = quadpoints{QUAD_DIRECTION,1};
     w = quadpoints{QUAD_DIRECTION,2};
     Domain = Knots1{QUAD_DIRECTION};
@@ -44,10 +47,58 @@ for ee=1:numel(elements)
         ParameterSpace1(QUAD_DIRECTION,BOUNDARY_DIRECTION) = [qq, BVAL];
         uu = ParameterSpace1(1);
         vv = ParameterSpace1(2);
+        
+        % Getting information from the other subdomain
         PhysicalSpace = SubDomain1.eval_point(uu,vv);
         x = PhysicalSpace.x;
         y = PhysicalSpace.y;
         ParameterSpace2 = InvFun2(x,y);
+        u2 = ParameterSpace2(1);
+        v2 = ParameterSpace2(2);
         
+         % Deformation information
+        PhysicalSpace = SubDomain2.eval_point(u2,v2);
+        z = PhysicalSpace.z;
         
+        % Here, we do a numerical derivative.
+        hx = sqrt(eps)*x; % Numerical stable x step
+        xph = x + hx;
+        
+        SteppedParameterSpace2 = InvFun2(xph,y);
+        uph2 = SteppedParameterSpace2(1);
+        vph2 = SteppedParameterSpace2(2);
+        SteppedPhysicalSpace = SubDomain2.eval_point(uph2,vph2);
+        zph = SteppedPhysicalSpace.z;
+        dzdx = (zph - z)/hx;
+        
+        % Now we repeat for y
+        hy = sqrt(eps)*y; % Numerical stable y step
+        yph = y + hy;
+        SteppedParameterSpace2 = InvFun2(x,yph);
+        uph2 = SteppedParameterSpace2(1);
+        vph2 = SteppedParameterSpace2(2);
+        SteppedPhysicalSpace = SubDomain2.eval_point(uph2,vph2);
+        zph = SteppedPhysicalSpace.z;
+        dzdy = (zph - z)/hy;
+        
+        % Gradient Vector 
+        gradz = [dzdx; dzdy];
+        
+        % Normal direction calculation
+        n = get_normal_vector(Subdomain1,BOUNDARY_DIRECTION,BVAL);
+        n = n/norm(n); % unitary vector
+        
+        dz = dot(gradz,n);
+        if abs(z) > sqrt(eps)
+            BETA = -dz/z;
+        else
+            BETA = 10e4;
+        end
+        
+        BoundaryData = [BOUNDARY_DIRECTION, QUAD_DIRECTION, BVAL];
+        [R, dR, J] = BoundaryShape(SubDomain1,q(i),e,IEN,INN,BoundaryData);
+        K_e = K_e + abs(J)*w(i)*R*BETA*R';
+    end
+    idx = LM(:,e)';
+    K(idx,idx) = K(idx,idx) + K_e;
 end
