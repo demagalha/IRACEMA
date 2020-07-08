@@ -96,7 +96,35 @@ classdef Geometry < handle
 		end
                 
         
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     function p = PolynomialOrder(obj)
+         switch obj.type
+             case 'curve'
+                 p = obj.pu;
+             case 'surf'
+                 p = zeros(2,1);
+                 p(1) = obj.pu;
+                 p(2) = obj.pv;
+             case 'volume'
+                 p = zeros(3,1);
+                 p(1) = obj.pu;
+                 p(2) = obj.pv;
+                 p(3) = obj.pw;
+         end
+     end
+     
+     function KnotCell = KnotVectorCell(obj)
+         p = obj.PolynomialOrder;
+         KnotCell = cell(size(p));
+         KnotCell{1} = obj.U;
+         if ~strcmp(obj.type,'curve')
+             KnotCell{2} = obj.V;
+             if ~strcmp(obj.type,'surface')
+                 KnotCell{3} = obj.W;
+             end
+         end
+     end
+
         function [PX, PY, PZ, weight] = UpdateCPTS(obj)
 			switch obj.type
 				case 'curve'
