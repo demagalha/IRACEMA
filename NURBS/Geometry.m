@@ -112,7 +112,6 @@ classdef Geometry < handle
                  p(3) = obj.pw;
          end
      end
-     
      function KnotCell = KnotVectorCell(obj)
          p = obj.PolynomialOrder;
          KnotCell = cell(size(p));
@@ -473,7 +472,7 @@ classdef Geometry < handle
         end
                 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FEM connectivity data
- 
+
         function [INN, IEN, nel, nen] = get_connectivity(obj)
 			switch obj.type
 				case 'curve'

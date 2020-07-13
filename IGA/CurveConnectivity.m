@@ -1,4 +1,4 @@
-function [global_basis_index, element_local_mapping]  = CurveConnectivity(GeometryObj);
+function [global_basis_index, element_local_mapping]  = CurveConnectivity(GeometryObj)
 array_size = size(GeometryObj.PX);
 ndof = prod(array_size);
 [n(:)] = ind2sub(array_size,1:ndof);
