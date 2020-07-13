@@ -11,7 +11,7 @@ elements_per_direction = zeros(size(p));
 basis_spans = cell(size(Knots));
 for i=1:length(Knots)
     elements_per_direction(i) = length(unique(Knots{i}))-1;
-    [~, basis_spans{i}] = KnotConnectivity(p(i),Knots{i},elements_per_direction(i)); 
+    [~, basis_spans{i}] = KnotConnectivity(p(i),Knots{i}); 
 end
 u_spans = cell2mat(basis_spans(1));
 v_spans = cell2mat(basis_spans(2));
@@ -19,7 +19,7 @@ ELEMENTS = prod(elements_per_direction);
 element_local_mapping = zeros(ELEMENT_DOFS, ELEMENTS);
 e_out = cell(size(Knots));
 [e_out{:}] = ind2sub(elements_per_direction,1:ELEMENTS);
-e_out = cell2mat(e_out);
+e_out = cell2mat(e_out');
 e_out = e_out'; % Global element number from parametric element nml
 for e=1:ELEMENTS
     tmp = e_out(e,:);

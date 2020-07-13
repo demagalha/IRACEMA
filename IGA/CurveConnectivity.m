@@ -11,7 +11,7 @@ elements_per_direction = zeros(size(p));
 basis_spans = cell(size(Knots));
 for i=1:length(Knots)
     elements_per_direction(i) = length(unique(Knots{i}))-1;
-    [~, basis_spans{i}] = KnotConnectivity(p(i),Knots{i},elements_per_direction(i)); 
+    [~, basis_spans{i}] = KnotConnectivity(p(i),Knots{i}); 
 end
 u_spans = cell2mat(basis_spans(1));
 ELEMENTS = prod(elements_per_direction);
@@ -24,7 +24,7 @@ for e=1:ELEMENTS
     tmp = e_out(e,:);
     ei = tmp(1);
     element_u_spans = u_spans(ei,:)';
-    element_basis = sub2ind(array_size,element_spans(:,1));
+    element_basis = sub2ind(array_size,element_u_spans(:,1));
     element_local_mapping(:,e) = element_basis;  
 end
 end

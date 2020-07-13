@@ -113,15 +113,18 @@ classdef Geometry < handle
          end
      end
      function KnotCell = KnotVectorCell(obj)
-         p = obj.PolynomialOrder;
-         KnotCell = cell(size(p));
-         KnotCell{1} = obj.U;
-         if ~strcmp(obj.type,'curve')
-             KnotCell{2} = obj.V;
-             if ~strcmp(obj.type,'surface')
+         KnotCell = {};
+         switch obj.type
+             case 'curve'
+                 KnotCell{1} = obj.U;
+             case 'surf'
+                 KnotCell{1} = obj.U;
+                 KnotCell{2} = obj.V;
+             case 'volume'
+                 KnotCell{1} = obj.U;
+                 KnotCell{2} = obj.V;
                  KnotCell{3} = obj.W;
-             end
-         end
+         end   
      end
 
         function [PX, PY, PZ, weight] = UpdateCPTS(obj)

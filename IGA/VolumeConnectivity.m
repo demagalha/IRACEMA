@@ -11,7 +11,7 @@ elements_per_direction = zeros(size(p));
 basis_spans = cell(size(Knots));
 for i=1:length(Knots)
     elements_per_direction(i) = length(unique(Knots{i}))-1;
-    [~, basis_spans{i}] = KnotConnectivity(p(i),Knots{i},elements_per_direction(i)); 
+    [~, basis_spans{i}] = KnotConnectivity(p(i),Knots{i}); 
 end
 u_spans = cell2mat(basis_spans(1));
 v_spans = cell2mat(basis_spans(2));
