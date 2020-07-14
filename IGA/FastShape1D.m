@@ -19,7 +19,7 @@ ActivePoints = cell2mat(ActivePoints);
 Weights = ActivePoints(:,4);
 P = ActivePoints(:,1:3);
 
-Basis = DersBasisFun(ni-1,u,pu,1,U);
+Basis = DersBasisFun(su,u,pu,1,U);
 B = Basis(1,:);
 dB = Basis(2,:);
 Q = B*Weights;
@@ -27,9 +27,9 @@ dQ = dB*Weights;
 
 R = B'.*Weights/W;
 dRdu = Weights.*(Q*dB'-dQ*B')/(Q*Q);
-x = sum((R.*P));
-
+% x = sum((R.*P));
 dxdu = P.*dRdu;
-J = norm(sum(dxdu))*(U(ni+1)-U(ni))/2;
+tmp = element_ranges(element,2,:) - element_ranges(element,1,:);
+J = norm(sum(dxdu))*tmp(1);
 dR = dRdu/J;
 end
