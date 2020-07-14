@@ -1,17 +1,20 @@
-function [R, dR, J] = FastShape1D(GeometryObject,IntegrationPoint,global_basis_index, element_local_mapping,element)
+function [R, dR, J] = FastShape1D(GeometryObject,IntegrationPoint, ...
+    global_basis_index, element_local_mapping, element_ranges, element)
 
 qu = IntegrationPoint(1);
 pu = GeometryObject.pu;
 U = GeometryObject.U;
 
-support_start = global_basis_index(element_local_mapping(1,element),:);
-ni = support_start(1);
-u = ((U(ni+1)+U(ni))*qu +U(ni+1) +U(ni))/2;
+support = global_basis_index(element_local_mapping(:,element),:);
 
-pu = GeometryObject.pu;
+tmp = sum(element_ranges(element,:,:));  % Equivalent to U(ni+1)+U(ni)
+u = tmp(1)*(1+qu)/2; % Parent Coordinates -> Parametric Coordinates
+
+su = FindSpanLinear(length(U)-pu-1,pu,u,U);
+
 P = GeometryObject.get_point_cell;
-ActivePoints = P(ni-pu:ni);
-ActivePoints = reshape(ActivePoints,numel(ActivePoints),1);
+ind = sub2ind(size(P),support(:,1));
+ActivePoints = P(ind);
 ActivePoints = cell2mat(ActivePoints);
 Weights = ActivePoints(:,4);
 P = ActivePoints(:,1:3);
