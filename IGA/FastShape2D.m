@@ -11,9 +11,11 @@ V = GeometryObject.V;
 
 support = global_basis_index(element_local_mapping(:,element),:);
 
-tmp = sum(element_ranges(element,:,:)); % Equivalent to U(ni+1)+U(ni)
-u = (tmp(1)*(1+qu))/2; % Parent Coordinates -> Parametric Coordinates
-v = (tmp(2)*(1+qv))/2;
+u_range = element_ranges(element,:,1);
+v_range = element_ranges(element,:,2);
+
+u = ((u_range(2)-u_range(1))*qu +(sum(u_range)))/2; % Parent -> Parametric
+v = ((v_range(2)-v_range(1))*qv +(sum(v_range)))/2;
 
 su = FindSpanLinear(length(U)-pu-1,pu,u,U);
 sv = FindSpanLinear(length(V)-pv-1,pv,v,V);

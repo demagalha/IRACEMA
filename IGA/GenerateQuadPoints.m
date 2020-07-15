@@ -1,5 +1,6 @@
 function [quad_point_index, weights] = GenerateQuadPoints(poly_orders)
-    switch length(p)
+p = poly_orders;
+    switch length(poly_orders)
         case 1
             [quad_point_index, weights] = getGP(p(1));
         case 2

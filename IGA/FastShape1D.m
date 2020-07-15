@@ -7,8 +7,8 @@ U = GeometryObject.U;
 
 support = global_basis_index(element_local_mapping(:,element),:);
 
-tmp = sum(element_ranges(element,:,:));  % Equivalent to U(ni+1)+U(ni)
-u = tmp(1)*(1+qu)/2; % Parent Coordinates -> Parametric Coordinates
+u_range = element_ranges(element,:,1);
+u = ((u_range(2)-u_range(1))*qu +(sum(u_range)))/2; % Parent -> Parametric
 
 su = FindSpanLinear(length(U)-pu-1,pu,u,U);
 
