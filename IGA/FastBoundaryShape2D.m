@@ -24,7 +24,7 @@ function [R, dR, J] = FastBoundaryShape2D(GeometryObj,IntegrationPoint, ...
     
     q_range = element_ranges(element,:,QUAD_DIRECTION);
     
-    q = ((q_range(2)-q_range(1)*qu +(sum(q_range)))/2; % Parent -> Parametric
+    q = ((q_range(2)-q_range(1))*qu +(sum(q_range)))/2; % Parent -> Parametric
     b = 1-mod(Boundary,2); % Boundary values are either 1 or 0.
     
     sq = FindSpanLinear(length(QK)-pq-1,pq,q,QK);
@@ -58,8 +58,11 @@ function [R, dR, J] = FastBoundaryShape2D(GeometryObj,IntegrationPoint, ...
     
     ratios = Weights/(Q*Q);
     
-   dxdu = sum(P.*dRdu);
-   dxdv = sum(P.*dRdv);
+    dRdu = ratios.*(Q*dBdu' -B'*dQdu);
+    dRdv = ratios.*(Q*dBdv' -B'*dQdv);
+    
+    dxdu = sum(P.*dRdu);
+    dxdv = sum(P.*dRdv);
 
     dXdU = [dxdu', dxdv'];
     dUdX = pinv(dXdU);
@@ -76,5 +79,5 @@ function [R, dR, J] = FastBoundaryShape2D(GeometryObj,IntegrationPoint, ...
     dQdU(3,3) = tmp(3);
     Jacobian = dXdU(:,1)*dQdU(1,:) + dXdU(:,2)*dQdU(2,:);
     Jacobian = Jacobian(1:3,1:2);
-    Jmod = det(Jacobian(1:2,1:2));
+    J = det(Jacobian(1:2,1:2));
 end

@@ -35,14 +35,14 @@ dBdu = kron(M(1,:), N(2,:));
 dBdv = kron(M(2,:), N(1,:));
 
 Q = B*Weights;
-dQdU = dBdu*Weights;
+dQdu = dBdu*Weights;
 dQdv = dBdv*Weights;
 
 R = B'.*Weights/Q;
 
 ratios = Weights/(Q*Q);
 
-dRdu = ratios.*(Q*dBdu' -B'*dQdU);
+dRdu = ratios.*(Q*dBdu' -B'*dQdu);
 dRdv = ratios.*(Q*dBdv' -B'*dQdv);
 
 % x = sum((R.*P));
