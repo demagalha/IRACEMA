@@ -3,6 +3,8 @@ p = poly_orders;
     switch length(poly_orders)
         case 1
             [quad_point_index, weights] = getGP(p(1));
+            quad_point_index = quad_point_index';
+            weights = weights';
         case 2
             [qu, wu] = getGP(p(1));
             [qv, wv] = getGP(p(2));

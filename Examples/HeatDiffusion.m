@@ -34,20 +34,61 @@ alpha = 52; % Heat Diffusivity Coefficient
 K = alpha*K;
 
 % Boundary Conditions
-Gamma3 = GetBoundaryConditionArray(Omega,2,0,373.15);
-Gamma1Elements = GetBoundaryElements(Omega,1,0,0);
+Boundaries = GetBoundaries(Omega);
+
+% By definition, GetBoundaries returns the boundaries in the order:
+% Gamma 1 -> u = 0
+% Gamma 2 -> u = 1
+% Gamma 3 -> v = 0
+% Gamma 4 -> v = 1
+%  In this plate model, 
+% 
+%     _______Gamma4__________
+% G  |                       | G
+% a  |                       | a
+% m  |                       | m
+% m  |                       | m
+% a  |_______________________| a
+% 1          Gamma 3           2
+% 
+% y,v
+% Î -> x,u
+
+Gamma1Basis = Boundaries{1,1};
+Gamma1Elements = Boundaries{1,2};
+
+Gamma2Basis = Boundaries{2,1};
+Gamma2Elements = Boundaries{2,2};
+
+Gamma3Basis = Boundaries{3,1};
+Gamma3Elements = Boundaries{3,2};
+
+Gamma4Basis = Boundaries{4,1};
+Gamma4Elements = Boundaries{4,2};
+
+% Neumann Boundary Conditions
+% We have Homogeneous Neumann Boundary conditions at Gamma1
+% Since this is the natural kind of BC, they don't need to be enforced.
+
+% Robin Boundary Conditions
+% We have Gamma2 and Gamma4 convecting to 0C with Heat Transfer Coefficient
+% of 750W/(mK) 
+
 h = -750;
 T_inf = 273.15; % Zero Celsius, in Kelvin
 ROBIN = -h*T_inf/alpha;
 BETA = -h/alpha;
-Gamma2Elements = GetBoundaryElements(Omega,1,1,[ROBIN,BETA]);
-Gamma4Elements = GetBoundaryElements(Omega,2,1,[ROBIN,BETA]);
 
 F = zeros(length(K),1);
 RobinElements = [Gamma2Elements; Gamma4Elements];
 NeumannElements = Gamma1Elements;
 [K,F] = RobinBC(Omega,K,F,RobinElements);
 [~,F] = RobinBC(Omega,K,F,NeumannElements);
+
+%% Post-Processing
+
+% Dirichlet Boundary Conditions
+% Gamma 3 is kept at 100C
 
 [d,~] = DirichletBC(K,F,Gamma3);
 [~, element_local_mapping, ~] = GetConnectivityArrays(Omega);
