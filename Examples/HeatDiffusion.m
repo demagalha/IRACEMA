@@ -32,7 +32,7 @@ SOLUTION_DIMENSIONS = 1; % Scalar problem
 [K, ~] = PoissonProblemAssembly(Omega,SOLUTION_DIMENSIONS);
 alpha = 52; % Heat Diffusivity Coefficient
 K = alpha*K;
-
+F = zeros(length(K),1);
 % Boundary Conditions
 Boundaries = GetBoundaries(Omega);
 
@@ -69,6 +69,12 @@ Gamma4Elements = Boundaries{4,2};
 % Neumann Boundary Conditions
 % We have Homogeneous Neumann Boundary conditions at Gamma1
 % Since this is the natural kind of BC, they don't need to be enforced.
+% But, for didatic purposes, we will run the script
+h = 0;
+gamma1_values = zeros(length(Gamma1Elements),1);
+gamma1_values(:) = h;
+
+F = ApplyNeumannBCs(Omega,F,Gamma1Elements,1,gamma1_values);
 
 % Robin Boundary Conditions
 % We have Gamma2 and Gamma4 convecting to 0C with Heat Transfer Coefficient
@@ -79,18 +85,31 @@ T_inf = 273.15; % Zero Celsius, in Kelvin
 ROBIN = -h*T_inf/alpha;
 BETA = -h/alpha;
 
-F = zeros(length(K),1);
-RobinElements = [Gamma2Elements; Gamma4Elements];
-NeumannElements = Gamma1Elements;
-[K,F] = RobinBC(Omega,K,F,RobinElements);
-[~,F] = RobinBC(Omega,K,F,NeumannElements);
+gamma2_values = zeros(length(Gamma2Elements),2);
+gamma4_values = zeros(length(Gamma4Elements),2);
 
-%% Post-Processing
+gamma2_values(:,1) = ROBIN;
+gamma2_values(:,2) = BETA;
+gamma4_values(:,1) = ROBIN;
+gamma4_values(:,2) = BETA;
+
+[K,F] = ApplyRobinBCs(Omega,K,F,Gamma2Elements,2,gamma2_values);
+[K,F] = ApplyRobinBCs(Omega,K,F,Gamma4Elements,4,gamma4_values);
 
 % Dirichlet Boundary Conditions
-% Gamma 3 is kept at 100C
+% Our method to apply Dirichlet BCs also gives the solution of the problem,
+% so we will have to bundle up every BC together in a single array.
+% Fortunately for us, only Gamma3 has DirichletBCs and everything is neat
+% and tidy already.
+% Also, since we will apply the BCs directly to the solution space, we only
+% need the Basis address and the values
+lift = 373.15; % 100 Celsius, in Kelvin
+gamma3_values = zeros(length(Gamma3Basis),1);
+gamma3_values(:) = lift;
 
-[d,~] = DirichletBC(K,F,Gamma3);
+[d, F] = ApplyDirichletBCs(K,F,Gamma3Basis,gamma3_values);
+
+%% Post-Processing
 [~, element_local_mapping, ~] = GetConnectivityArrays(Omega);
 [ID, ~] = BuildGlobalLocalMatrices(element_local_mapping,SOLUTION_DIMENSIONS);
 PlotDisplacement(d,ID,Omega);

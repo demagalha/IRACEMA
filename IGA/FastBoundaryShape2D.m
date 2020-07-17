@@ -25,7 +25,7 @@ function [R, dR, J] = FastBoundaryShape2D(GeometryObj,IntegrationPoint, ...
     q_range = element_ranges(element,:,QUAD_DIRECTION);
     
     q = ((q_range(2)-q_range(1))*qu +(sum(q_range)))/2; % Parent -> Parametric
-    b = 1-mod(Boundary,2); % Boundary values are either 1 or 0.
+    b = (1-mod(Boundary,2)); % Boundary values are either 1 or 0.
     
     sq = FindSpanLinear(length(QK)-pq-1,pq,q,QK);
     sb = FindSpanLinear(length(BK)-pb-1,pb,b,BK);
@@ -38,7 +38,11 @@ function [R, dR, J] = FastBoundaryShape2D(GeometryObj,IntegrationPoint, ...
     P = ActivePoints(:,1:3);
     
     NQ = DersBasisFun(sq,q,pq,1,QK);
-    NB = DersBasisFun(sb,b,pb,1,BK);
+    if b == 1
+        NB = DersBasisFun(sb-1,b,pb,1,BK);
+    elseif b == 0
+        NB = DersBasisFun(sb,b,pb,1,BK);
+    end
     
     N = cell(2,1);
     N{QUAD_DIRECTION} = NQ;

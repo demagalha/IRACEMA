@@ -2,10 +2,11 @@ function [K, F] = ApplyRobinBCs(GeometryObj,K,F,BoundaryElements,Boundary, ...
     boundary_values)
     [global_basis_index, element_local_mapping, element_ranges] = ...
         GetConnectivityArrays(GeometryObj);
+    SOLUTION_DIMENSIONS = length(K)/size(global_basis_index,1);
     [~, local_matrix] = BuildGlobalLocalMatrices(element_local_mapping, ...
         SOLUTION_DIMENSIONS);
     p = GeometryObj.PolynomialOrder;
-    p(Boundary) = [];
+    p(round(Boundary/2)) = [];
     [quad_point_index, weights] = GenerateQuadPoints(p);
 
     N_QUAD_POINTS = length(weights);
@@ -16,9 +17,9 @@ function [K, F] = ApplyRobinBCs(GeometryObj,K,F,BoundaryElements,Boundary, ...
         K_e = zeros(N_ELE_DOF);
         F_e = zeros(N_ELE_DOF,1);
         for n=1:N_QUAD_POINTS
-            IntegrationPoint = quad_points_index(n,:);
-            r = boundary_values(e,1);
-            beta = boundary_values(e,2);
+            IntegrationPoint = quad_point_index(n,:);
+            r = boundary_values(ee,1);
+            beta = boundary_values(ee,2);
             [R, ~, J] = FastBoundaryShape(GeometryObj,IntegrationPoint,...
                 global_basis_index,element_local_mapping,element_ranges, ...
                 e, Boundary);
