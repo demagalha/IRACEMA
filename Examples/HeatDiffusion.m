@@ -74,16 +74,16 @@ h = 0;
 gamma1_values = zeros(length(Gamma1Elements),1);
 gamma1_values(:) = h;
 
-F = ApplyNeumannBCs(Omega,F,Gamma1Elements,1,gamma1_values);
+% F = ApplyNeumannBCs(Omega,F,Gamma1Elements,1,gamma1_values);
 
 % Robin Boundary Conditions
 % We have Gamma2 and Gamma4 convecting to 0C with Heat Transfer Coefficient
 % of 750W/(mK) 
 
-h = -750;
+h = 750;
 T_inf = 273.15; % Zero Celsius, in Kelvin
-ROBIN = -h*T_inf/alpha;
-BETA = -h/alpha;
+ROBIN = h*(T_inf)/alpha;
+BETA = h/alpha;
 
 gamma2_values = zeros(length(Gamma2Elements),2);
 gamma4_values = zeros(length(Gamma4Elements),2);
@@ -93,8 +93,10 @@ gamma2_values(:,2) = BETA;
 gamma4_values(:,1) = ROBIN;
 gamma4_values(:,2) = BETA;
 
-[K,F] = ApplyRobinBCs(Omega,K,F,Gamma2Elements,2,gamma2_values);
-[K,F] = ApplyRobinBCs(Omega,K,F,Gamma4Elements,4,gamma4_values);
+[K,F] = ApplyRobinBCs(Omega,K,F,Gamma2Basis,2,gamma2_values);
+[K,F] = ApplyRobinBCs(Omega,K,F,Gamma4Basis,4,gamma4_values);
+
+
 
 % Dirichlet Boundary Conditions
 % Our method to apply Dirichlet BCs also gives the solution of the problem,
