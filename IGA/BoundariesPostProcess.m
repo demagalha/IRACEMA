@@ -5,10 +5,9 @@ ndof = sz1+numel(boundaries);
 
 
 for i=1:numel(boundaries)
-
 	if boundaries(i) == 1
 		autovector = [zeros(1,sz2); autovector(1:end,:)];
-	else if boundaries(i) == ndof
+    elseif boundaries(i) == ndof
 		autovector = [autovector(1:end,:); zeros(1,sz2)];
 	else
 		autovector = [autovector(1:boundaries(i)-1,:); zeros(1,sz2); autovector(boundaries(i):end,:)];

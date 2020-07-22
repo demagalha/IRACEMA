@@ -1,4 +1,9 @@
-function Modes = VisualizeModes(Model,autovector,ID)
+function Modes = VisualizeModes(Model,autovector)
+    [global_basis_index, element_local_mapping, element_ranges] = ...
+        GetConnectivityArrays(Model);
+    SOLUTION_DIMENSIONS = length(autovector)/length(global_basis_index);
+   [ID, ~] = BuildGlobalLocalMatrices(element_local_mapping, ...
+        SOLUTION_DIMENSIONS);   
     B = Model.get_point_cell;
     u = cell(size(B));
     comb = u;

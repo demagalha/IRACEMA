@@ -13,6 +13,7 @@ function [R, dR, J] = FastBoundaryShape2D(GeometryObj,IntegrationPoint, ...
    
     ind = element_connectivity(element,:);
     ActivePoints = Points(ind,:);
+    ActivePoints = cell2mat(ActivePoints);
     Weights = ActivePoints(:,4);
     P = ActivePoints(:,1:3);
     
