@@ -191,7 +191,7 @@ while i<nrows*ncols
 end
     current_results(h,1) = EigenValues1;
     current_results(h,2) = EigenValues2;
-    current_results(h,3) = EigenValues3;
+    current_results(h,3) = EigenValues;
     h = h+1;
     end
     Results{p} = current_results;
