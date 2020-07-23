@@ -13,7 +13,7 @@ clc
         line2 = geo_line(P3,P4); % Second line
         Omega = geo_ruled(line1,line2); % The Ruled Surface defined by lines 1 and 2
     % Subdomains Definition
-        overlap = 0.5; % Percentage of intersection area
+        overlap = 0.75; % Percentage of intersection area
         P5 = [b*(1+overlap)/2 0 0 1];
         P6 = [b*(1+overlap)/2 a 0 1];
         line3 = geo_line(P5,P6);
@@ -23,22 +23,22 @@ clc
         Omega1 = geo_ruled(line1,line3); % Subdomain 1
         Omega2 = geo_ruled(line4,line2); % Subdomain 2
 %% Refinement
-p = 2; % Number of p refinements
+p = 1; % Number of p refinements
     Omega.DegreeElevate(p,1);
     Omega.DegreeElevate(p,2);
     Omega1.DegreeElevate(p,1);
     Omega1.DegreeElevate(p,2);
     Omega2.DegreeElevate(p,1);
     Omega2.DegreeElevate(p,2);
-h = 10; % Number of h-refinements
+h = 6; % Number of h-refinements
     interval = linspace(0,1,h+2);
     interval = setdiff(interval,[0, 1]);
     Omega.KnotRefine(interval,1);
-    Omega.KnotRefine(interval,2);
+    Omega.KnotRefine(.5,2);
     Omega1.KnotRefine(interval,1);
-    Omega1.KnotRefine(interval,2);
+    Omega1.KnotRefine(.1429,2);
     Omega2.KnotRefine(interval,1);
-    Omega2.KnotRefine(interval,2);
+    Omega2.KnotRefine(.8571,2);
 %% Assembly
 % Stiffness and Mass matrices
     NUMBER_OF_SOLUTION_DIMENTIONS = 1;
@@ -109,11 +109,12 @@ h = 10; % Number of h-refinements
     K1 = sparse(K1);
     M1 = sparse(M1);
     [EigenVector1, EigenValues1] = eigs(K1,M1,1,'sm');
+    K1 = KK1;
     
     K2 = sparse(K2);
     M2 = sparse(M2);
     [EigenVector2, EigenValues2] = eigs(K2,M2,1,'sm');
- 
+    K2 = KK2;
 %% Post-Processing
 % We have to re-add the constrained DOFs in the right position as 0s in the
 % EigenVector. Fortunately, we have made a function for that.
@@ -138,12 +139,14 @@ OmegaOneInverse = @(x,y) [y, 2*x/(b*(1+overlap))];
 tmp = b*(1-overlap)/2;
 OmegaTwoInverse = @(x,y) [y, (x-tmp)/(b-tmp)];
 i = 1;
+nrows = 3;
+ncols = 5;
 figure(1)
-while i<12
+while i<nrows*ncols
     % Lui Boundary Condition for Omega 1
     K1 = LuiBC_2D(Omega1VisualizationCell{1},Omega2VisualizationCell{1}, ...
         KK1,Gamma41,4,OmegaTwoInverse);
-        KK1 = K1; M1 = MM1;
+        M1 = MM1;
         K1(ConstrainedOneBoundaries,:) = [];
         K1(:,ConstrainedOneBoundaries) = [];
         M1(ConstrainedOneBoundaries,:) = [];
@@ -151,15 +154,19 @@ while i<12
         K1 = sparse(K1);
         M1 = sparse(M1);
         [EigenVector1, EigenValues1] = eigs(K1,M1,1,'sm');
+        if abs(min(EigenVector1)) > abs(max(EigenVector1))
+            EigenVector1 = -EigenVector1;
+        end
+        K1 = KK1;
     EigenVector1 = BoundariesPostProcess(EigenVector1,ConstrainedOneBoundaries);
     Omega1VisualizationCell = VisualizeModes(Omega1,EigenVector1);
-    subplot(3,4,i)
+    subplot(nrows,ncols,i)
     Omega1VisualizationCell{1}.plot_geo
     i = i+1;
     % Lui Boundary Condition for Omega 2
     K2 = LuiBC_2D(Omega2VisualizationCell{1},Omega1VisualizationCell{1}, ...
         KK2,Gamma32,3,OmegaOneInverse);
-        KK2 = K2; M2 = MM2;
+        M2 = MM2;
         K2(ConstrainedTwoBoundaries,:) = [];
         K2(:,ConstrainedTwoBoundaries) = [];
         M2(ConstrainedTwoBoundaries,:) = [];
@@ -167,9 +174,13 @@ while i<12
         K2 = sparse(K2);
         M2 = sparse(M2);
         [EigenVector2, EigenValues2] = eigs(K2,M2,1,'sm');
+        if abs(min(EigenVector2)) > abs(max(EigenVector2))
+            EigenVector2 = -EigenVector2;
+        end
+        K2 = KK2;
     EigenVector2 = BoundariesPostProcess(EigenVector2,ConstrainedTwoBoundaries);
     Omega2VisualizationCell = VisualizeModes(Omega2,EigenVector2);
-    subplot(3,4,i)
+    subplot(nrows,ncols,i)
     Omega2VisualizationCell{1}.plot_geo
 end
 

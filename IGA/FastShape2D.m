@@ -45,7 +45,7 @@ ratios = Weights/(Q*Q);
 dRdu = ratios.*(Q*dBdu' -B'*dQdu);
 dRdv = ratios.*(Q*dBdv' -B'*dQdv);
 
-% x = sum((R.*P));
+x = sum((R.*P));
 
 dxdu = sum(P.*dRdu);
 dxdv = sum(P.*dRdv);
