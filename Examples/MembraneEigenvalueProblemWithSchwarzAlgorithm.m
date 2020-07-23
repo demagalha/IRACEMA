@@ -1,6 +1,13 @@
 clearvars
 run startup.m
 clc
+
+p = 1; % Number of p refinements
+h = 1; % Number of h-refinements
+Results = cell(8,1);
+while p < 8
+    current_results = zeros(50,2);
+    while h < 50
 %% Geometry Input
     a = 1;
     b = 1.5;
@@ -23,22 +30,21 @@ clc
         Omega1 = geo_ruled(line1,line3); % Subdomain 1
         Omega2 = geo_ruled(line4,line2); % Subdomain 2
 %% Refinement
-p = 1; % Number of p refinements
     Omega.DegreeElevate(p,1);
     Omega.DegreeElevate(p,2);
     Omega1.DegreeElevate(p,1);
     Omega1.DegreeElevate(p,2);
     Omega2.DegreeElevate(p,1);
     Omega2.DegreeElevate(p,2);
-h = 6; % Number of h-refinements
+
     interval = linspace(0,1,h+2);
     interval = setdiff(interval,[0, 1]);
     Omega.KnotRefine(interval,1);
     Omega.KnotRefine(.5,2);
     Omega1.KnotRefine(interval,1);
-    Omega1.KnotRefine(.1429,2);
+    Omega1.KnotRefine(.5,2);
     Omega2.KnotRefine(interval,1);
-    Omega2.KnotRefine(.8571,2);
+    Omega2.KnotRefine(.5,2);
 %% Assembly
 % Stiffness and Mass matrices
     NUMBER_OF_SOLUTION_DIMENTIONS = 1;
@@ -141,7 +147,7 @@ OmegaTwoInverse = @(x,y) [y, (x-tmp)/(b-tmp)];
 i = 1;
 nrows = 3;
 ncols = 5;
-figure(1)
+% figure(1)
 while i<nrows*ncols
     % Lui Boundary Condition for Omega 1
     K1 = LuiBC_2D(Omega1VisualizationCell{1},Omega2VisualizationCell{1}, ...
@@ -161,7 +167,7 @@ while i<nrows*ncols
     EigenVector1 = BoundariesPostProcess(EigenVector1,ConstrainedOneBoundaries);
     Omega1VisualizationCell = VisualizeModes(Omega1,EigenVector1);
     subplot(nrows,ncols,i)
-    Omega1VisualizationCell{1}.plot_geo
+%     Omega1VisualizationCell{1}.plot_geo
     i = i+1;
     % Lui Boundary Condition for Omega 2
     K2 = LuiBC_2D(Omega2VisualizationCell{1},Omega1VisualizationCell{1}, ...
@@ -181,6 +187,13 @@ while i<nrows*ncols
     EigenVector2 = BoundariesPostProcess(EigenVector2,ConstrainedTwoBoundaries);
     Omega2VisualizationCell = VisualizeModes(Omega2,EigenVector2);
     subplot(nrows,ncols,i)
-    Omega2VisualizationCell{1}.plot_geo
+%     Omega2VisualizationCell{1}.plot_geo
 end
-
+    current_results(h,1) = EigenValues1;
+    current_results(h,2) = EigenValues2;
+    current_results(h,3) = EigenValues3;
+    h = h+1;
+    end
+    Results{p} = current_results;
+p = p+1;
+end
