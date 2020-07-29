@@ -12,6 +12,17 @@ POISSON = 0.3;
 LOAD = [0 0];
 Tx = -10;
 
+% Refinement
+pp = 1;
+Omega.DegreeElevate(pp,1);
+Omega.DegreeElevate(pp,2);
+h = 10;
+interval = linspace(0,1,h+2);
+interval = setdiff(interval,[0 1]);
+Omega.KnotRefine(interval,1);
+Omega.KnotRefine(interval,2);
+
+
 [K,F] = LinearElasticityAssemble2D(Omega,YOUNG,POISSON,LOAD);
 
 P = Omega.get_point_cell;
