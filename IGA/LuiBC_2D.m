@@ -14,7 +14,7 @@ function K = LuiBC_2D(GeometryObj1,GeometryObj2,K,BoundaryBasis,Boundary, ...
     [boundary_ranges, eConn] = KnotConnectivity(pq,Knot);
     [NUMBER_OF_ELEMENTS, ELEMENT_DOFS] = size(eConn);
     
-    [q, w] = getGP(pq);
+    [q, w] = getGP(2*pq +1);
     Points = GeometryObj1.get_point_cell;
     BPoints = Points(:);
     BPoints = BPoints(BoundaryBasis); 
@@ -104,9 +104,9 @@ function K = LuiBC_2D(GeometryObj1,GeometryObj2,K,BoundaryBasis,Boundary, ...
 %             dz = SubDomainPerturbed.z - z2;
 %             dzdx = dz/dx;
 %             dzdy = dz/dy;
-            du2 = [dzdx; dzdy; 1];
-            f_ell = dot(du2,normal);
-            K_e = K_e +w(i)*J*(f_ell*(R1*R1') +(1-g_ell)*(dR*R1'));
+            du2 = [dzdx; dzdy; 0];
+            f_ell = dot(du2,-normal);
+            K_e = K_e -w(i)*J*(f_ell*(R1*R1') +(1-g_ell)*(dR*R1'));
         end
         idx = BoundaryBasis(eConn(e,:));
         K(idx,idx) = K(idx,idx) + K_e;

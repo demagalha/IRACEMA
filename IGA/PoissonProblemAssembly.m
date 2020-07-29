@@ -16,7 +16,8 @@ function [K, M] = PoissonProblemAssembly(GeometryObj,SOLUTION_DIMENSIONS)
         K_e = M_e;
         for n=1:N_QUAD_POINTS
             IntegrationPoint = quad_point_index(n,:);
-            [R, dR, J] = FastShape(GeometryObj,IntegrationPoint, global_basis_index, element_local_mapping, element_ranges,e);
+            [R, dR, J] = FastShape(GeometryObj,IntegrationPoint, ...
+                global_basis_index, element_local_mapping, element_ranges,e);
                 Jmod = abs(J*weights(n));
             K_e = K_e + Jmod*(dR*dR');
             M_e = M_e + Jmod*(R*R');
