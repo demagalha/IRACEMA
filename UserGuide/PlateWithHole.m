@@ -6,17 +6,17 @@ clc
 
 a = 1;
 L = 4;
-Omega = BuildHoledPlate(L,a);
+Omega = BuildHoledPlate;
 YOUNG = 1e5;
 POISSON = 0.3;
 LOAD = [0 0];
 Tx = -10;
 
 % Refinement
-pp = 1;
-Omega.DegreeElevate(pp,1);
-Omega.DegreeElevate(pp,2);
-h = 10;
+% pp = 2;
+% Omega.DegreeElevate(pp,1);
+% Omega.DegreeElevate(pp,2);
+h = 2^6;
 interval = linspace(0,1,h+2);
 interval = setdiff(interval,[0 1]);
 Omega.KnotRefine(interval,1);
@@ -25,11 +25,8 @@ Omega.KnotRefine(interval,2);
 
 [K,F] = LinearElasticityAssemble2D(Omega,YOUNG,POISSON,LOAD);
 
-P = Omega.get_point_cell;
-P = P(:);
-P = cell2mat(P);
+Boundaries = GetBoundaries(Omega);
 
-BoundaryBasis = union(find(P(:,1) == 0),find(P(:,2) == 4));
 % One can also use Boundaries = GetBoundaries and Basis =  Boundaries{3}
 % as the Boundaries where the exact stresses are put. 
 % The way this Holed Plate is constructed, the second parametric direction
@@ -42,7 +39,8 @@ BoundaryBasis = union(find(P(:,1) == 0),find(P(:,2) == 4));
 [global_basis_index, element_local_mapping, element_ranges] = ...
          GetConnectivityArrays(Omega);
 [global_id, ~] = BuildGlobalLocalMatrices(element_local_mapping,2);
-Boundary = 3;
+Boundary = 4;
+BoundaryBasis = Boundaries{4};
 directions = [1 2];
 QUAD_DIRECTION = setdiff(directions,round(Boundary/2));
 
@@ -68,7 +66,7 @@ for e=1:NUMBER_OF_ELEMENTS
         % Exact stress at point
         qq = ((B_RANGE(2) - B_RANGE(1))*IntegrationPoint +(sum(B_RANGE)))/2;
         physical_coord = Omega.eval_point(qq,0);
-        x = 4 - physical_coord.x;
+        x = physical_coord.x;
         y = physical_coord.y;
         
         r = sqrt(x^2 +y^2);
@@ -78,13 +76,19 @@ for e=1:NUMBER_OF_ELEMENTS
         r4 = ratio^4;
         c2 = cos(2*theta);
         c4 = cos(4*theta);
+        s2 = sin(2*theta);
         
-        sx = Tx*(1 - r2*(1.5*c2 +c4) +1.5*r4*c4);
-        sy = Tx*(-r2*(0.5*c2 -c4) +1.5*r4*c4);
+        sigma_rr = ((Tx)/2)*(1-r2) +((Tx)/2)*(1-4*r2 +3*r4)*c2;
+        sigma_tt = ((Tx)/2)*(1+r2) -((Tx)/2)*(1 +3*r4)*c2;
+        sigma_rt = -((Tx)/2)*(1 +2*r2 -3*r4)*s2;
+        
+        T = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+        S = T*[sigma_rr sigma_rt; sigma_rt sigma_tt];
+        
         x_index = 1:2:length(R)*2;
         y_index = 2:2:length(R)*2;
-        F_e(x_index) = F_e(x_index) +R*sx*Jmod;
-        F_e(y_index) = F_e(y_index) +R*sy*Jmod;
+        F_e(x_index) = F_e(x_index) +R*S(1,1)*Jmod;
+        F_e(y_index) = F_e(y_index) +R*S(2,2)*Jmod;
     end
     idx = BoundaryBasis(eConn(e,:))';
     idx = global_id(:,idx);
@@ -92,6 +96,21 @@ for e=1:NUMBER_OF_ELEMENTS
     F(idx) = F(idx) + F_e;
 end
 %% Dirichlet Boundary Condition
+% There is one control point that is repeated. This means that we have to
+% make their DOFs have the same displacements.
+% This is done via penalty method
+penalty = 1000;
+P = Omega.get_point_cell;
+PP = cell2mat(P(:));
+repeated_points = intersect(find(PP(:,1) == -4),find(PP(:,2) == 4));
+penalty_stiffness = penalty*[1 -1; -1 1];
+penalty_ids = global_id(:,repeated_points);
+K(penalty_ids(1,:),penalty_ids(1,:)) = ...
+    K(penalty_ids(1,:),penalty_ids(1,:)) + penalty_stiffness;
+K(penalty_ids(2,:),penalty_ids(2,:)) = ...
+    K(penalty_ids(2,:),penalty_ids(2,:)) + penalty_stiffness;
+
+
 % There are symmetry conditions to be enforced.
 % The symmetry conditions say that:
 % 1. There's no "flux" (the dot product of derivative with normal is zero)
@@ -102,12 +121,12 @@ end
 % There are symmetries in y = 0 and x = 4
 
 Points = cell2mat(Points);
-SymmetryBoundaries1 = find(Points(:,1) == 4); % Careful with this logical
-SymmetryBoundaries2 = find(Points(:,2) == 0); % use abs(P - value) < eps
+SymmetryBoundaries1 = find(abs(Points(:,1) - 0) < sqrt(eps)); % Careful with this logical
+SymmetryBoundaries2 = find(abs(Points(:,2) - 0) < sqrt(eps)); % use abs(P - value) < eps
 [global_id, ~] = BuildGlobalLocalMatrices(element_local_mapping,2);
 SymmetryBoundaries1 = global_id(1,SymmetryBoundaries1); % x is symmetric
 SymmetryBoundaries2 = global_id(2,SymmetryBoundaries2); % y is symmetric
-SymmetryBoundaries = [SymmetryBoundaries1; SymmetryBoundaries2];
+SymmetryBoundaries = union(SymmetryBoundaries1,SymmetryBoundaries2);
 SymmetryBoundaries = SymmetryBoundaries(:);
 boundary_values = zeros(size(SymmetryBoundaries));
 [d,F] = ApplyDirichletBCs(K,F,SymmetryBoundaries,boundary_values);
@@ -121,8 +140,6 @@ end
 PP = num2cell(Points,2);
 PP = reshape(PP,size(Omega.PX));
 DeformedOmega = Geometry('surf',Omega.pu,Omega.U,Omega.pv,Omega.V,PP);
-figure(1)
-DeformedOmega.plot_geo('coarse',1,1)
 
 % Stress Plotting
 
@@ -164,8 +181,16 @@ for e=1:NUMBER_OF_ELEMENTS
         Coordinates(e,n,3) = physical_coord.z;
     end
 end
+xx = Coordinates(:,:,1);
+yy = Coordinates(:,:,2);
+ss = Sigma(:,:,1);
 
-        
+figure(1)
+scatter(xx(:),yy(:),10,ss(:))
+% set(gca,'Color','k)
+grid on
+colormap(jet)
+colorbar
         
         
         
